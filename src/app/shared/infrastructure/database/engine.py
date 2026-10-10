@@ -1,9 +1,10 @@
-from config import settings
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+
+from app.config import settings
 
 DATABASE_URL = URL.create(
     drivername="postgresql+asyncpg",
