@@ -8,6 +8,11 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str
 
+
+    @staticmethod
+    def viacep_url(cep: str) -> str:
+        return f"https://viacep.com.br/ws/{cep}/json/"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore",

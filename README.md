@@ -1,0 +1,81 @@
+# MEC System
+
+## API de usuários
+
+Execute `uv run uvicorn app.main:app --app-dir src --reload`.
+A documentação Swagger UI fica em `http://127.0.0.1:8000/docs`.
+O ReDoc fica em `http://127.0.0.1:8000/redoc` e o schema OpenAPI em
+`http://127.0.0.1:8000/openapi.json`.
+Essas rotas são habilitadas explicitamente em `create_app`, inclusive ao
+executar sem `--reload`. O comando `uv build` apenas gera o pacote;
+para acessar o Swagger, inicie o servidor com o comando acima.
+
+| Método | Rota | Resultado |
+| --- | --- | --- |
+| POST | `/users` | Cria usuário (201) |
+| GET | `/users?offset=0&limit=100` | Lista usuários com paginação |
+| GET | `/users/{user_id}` | Consulta usuário |
+| PATCH | `/users/{user_id}` | Atualiza campos enviados |
+| DELETE | `/users/{user_id}` | Exclui usuário (204) |
+
+O `id` público é um inteiro positivo gerado sequencialmente pelo banco:
+use, por exemplo, `/users/1` para consultar, atualizar ou excluir.
+O `system_id` é um UUID gerado pelo sistema, retornado na criação e atualização,
+mas omitido nas respostas de consulta e listagem;
+nenhum dos dois deve ser enviado no corpo de criação ou atualização.
+Sequências podem ter intervalos após exclusões ou transações desfeitas.
+`create_at` e `update_at` são datas de persistência; o ORM atualiza
+`update_at` quando emite uma alteração SQL. No PostgreSQL, as colunas
+armazenam datas com fuso horário.
+
+### Migração do ID antigo
+
+Para uma tabela `cliente` existente com chave UUID, pare a aplicação e execute:
+
+```powershell
+uv run --env-file .env python -m app.bootstrap.migrate_client_ids
+```
+
+A migração preserva os UUIDs na coluna `system_id`, cria a chave inteira
+com identity e adiciona as datas. Os registros antigos recebem o horário
+da migração nas duas datas, pois não havia histórico anterior.
+A operação é transacional e pode ser repetida. Caso existam foreign keys
+para `cliente`, ela interrompe sem alterar os dados: essas relações precisam
+ser migradas junto com a chave. Depois, reinicie a aplicação.
+Para um banco novo, use `create_tables`; ele não migra tabelas existentes.
+
+Exemplo de criação:
+
+```json
+{
+  "primary_name": "Fernando",
+  "secondary_name": "Silva",
+  "cpf": "52998224725",
+  "email": "fernando@example.com",
+  "role": "client",
+  "address": {"cep": "01001000", "number": "10", "complement": "Sala 1"}
+}
+```
+
+O bootstrap em `app.bootstrap.users` conecta os casos de uso ao ViaCEP.
+O cliente HTTP é aberto e fechado pelo lifespan da aplicação.
+As rotas ficam em `modules/users/infrastructure/http`.
+
+### Configuração de persistência
+
+A aplicação usa `SQLAlchemyUserRepository` por padrão, com uma sessão
+PostgreSQL por requisição. Configure as variáveis `POSTGRES_*` no `.env`
+e crie a tabela com `uv run --env-file .env python -m app.bootstrap.create_tables`.
+Para conectar outra implementação, crie a aplicação com
+`create_app(user_repository=repository)` ou substitua a dependência
+`get_user_repository`.
+O contrato está em `application/ports/user_repository.py`.
+Não compartilhe uma sessão SQLAlchemy entre requisições concorrentes.
+
+Usuários inexistentes retornam 404, entradas inválidas retornam 422 e
+falhas HTTP do serviço de CEP retornam 502. Conflitos de integridade,
+como CPF duplicado, retornam 409.
+
+Execute os testes isolados com
+`uv run pytest tests/unit/test_users_router.py -q`.
+Eles usam um repositório de teste e respostas simuladas do ViaCEP.
