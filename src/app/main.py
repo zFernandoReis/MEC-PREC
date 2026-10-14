@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 
+from app.modules.budgets.infrastructure.http.router import router as budgets_router
 from app.modules.users.application.exceptions import UserNotFoundError
 from app.modules.users.application.ports.user_repository import UserRepository
 from app.modules.users.infrastructure.http.router import router as users_router
@@ -26,6 +27,7 @@ def create_app(user_repository: UserRepository | None = None) -> FastAPI:
     )
     application.state.user_repository = user_repository
     application.include_router(users_router)
+    application.include_router(budgets_router)
 
     @application.exception_handler(IntegrityError)
     async def integrity_error(request: Request, exc: IntegrityError):
@@ -33,6 +35,10 @@ def create_app(user_repository: UserRepository | None = None) -> FastAPI:
             status_code=409,
             content={"detail": "Dados em conflito com as restrições do banco de dados"},
         )
+
+    @application.exception_handler(UserNotFoundError)
+    async def budget_not_found(request: Request, exc: UserNotFoundError):
+        return JSONResponse(status_code=404, content={"detail": str(exc)})
 
     @application.exception_handler(UserNotFoundError)
     async def user_not_found(request: Request, exc: UserNotFoundError):

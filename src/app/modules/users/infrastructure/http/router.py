@@ -7,7 +7,6 @@ from app.modules.users.application.dtos.user_dto import CreateUserDTO, UpdateUse
 from app.modules.users.infrastructure.http.dependencies import get_users_use_cases
 from app.modules.users.infrastructure.http.schemas import UserReadResponse, UserResponse
 
-
 router = APIRouter(prefix="/users", tags=["Users"])
 UseCases = Annotated[UsersUseCases, Depends(get_users_use_cases)]
 UserId = Annotated[int, Path(ge=1)]

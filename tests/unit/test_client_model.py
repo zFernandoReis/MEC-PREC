@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.modules.users.domain.entities.user import User
 from app.modules.users.domain.enums.user_role import UserRole
 from app.modules.users.domain.value_objects.address import Address
-from app.modules.users.infrastructure.models.client_model import ClientModel
+from app.modules.users.infrastructure.models.users_model import UserModel
 from app.shared.infrastructure.database.base import Base
 
 
@@ -23,11 +23,11 @@ def test_persist_and_restore_entity(role):
     try:
         Base.metadata.create_all(engine)
         with Session(engine) as session:
-            session.add(ClientModel.from_entity(user))
+            session.add(UserModel.from_entity(user))
             session.commit()
 
         with Session(engine) as session:
-            model = session.scalars(select(ClientModel)).one()
+            model = session.scalars(select(UserModel)).one()
             restored = model.to_entity()
             assert restored.id == 1
             assert restored.system_id == user.system_id
@@ -37,7 +37,7 @@ def test_persist_and_restore_entity(role):
             assert restored.role == user.role
             assert model.address == user.adress
             assert session.connection().exec_driver_sql(
-                "SELECT role FROM cliente"
+                "SELECT role FROM users"
             ).scalar_one() == role.value
             model.address = Address(
                 cep="20040002", street="Rua da Assembleia", neighborhood="Centro",

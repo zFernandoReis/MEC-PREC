@@ -1,6 +1,6 @@
 import asyncio
 
-from app.modules.users.infrastructure.models.client_model import ClientModel
+from app.modules.users.infrastructure.models.users_model import UserModel
 from app.shared.infrastructure.database.engine import engine
 
 
@@ -9,7 +9,7 @@ async def create_tables() -> None:
     try:
         async with engine.begin() as connection:
             await connection.run_sync(
-                lambda sync_connection: ClientModel.__table__.create(
+                lambda sync_connection: UserModel.__table__.create(
                     sync_connection, checkfirst=True
                 )
             )

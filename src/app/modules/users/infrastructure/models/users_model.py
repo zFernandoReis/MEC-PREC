@@ -10,10 +10,10 @@ from app.modules.users.domain.value_objects.address import Address
 from app.shared.infrastructure.database.base import Base
 
 
-class ClientModel(Base):
+class UserModel(Base):
     """Persistência de User na tabela cliente, reutilizando Address e UserRole."""
 
-    __tablename__ = "cliente"
+    __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, Identity(), primary_key=True)
     system_id: Mapped[UUID] = mapped_column(
@@ -54,7 +54,7 @@ class ClientModel(Base):
     )
 
     @classmethod
-    def from_entity(cls, user: User) -> "ClientModel":
+    def from_entity(cls, user: User) -> "UserModel":
         return cls(
             id=user.id,
             system_id=user.system_id,
