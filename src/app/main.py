@@ -5,13 +5,14 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 
+from app.modules.budgets.application.ports.budget_repository import BudgetRepository
 from app.modules.budgets.infrastructure.http.router import router as budgets_router
 from app.modules.users.application.exceptions import UserNotFoundError
 from app.modules.users.application.ports.user_repository import UserRepository
 from app.modules.users.infrastructure.http.router import router as users_router
 
 
-def create_app(user_repository: UserRepository | None = None) -> FastAPI:
+def create_app(user_repository: UserRepository | None = None, budget_repository: BudgetRepository | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(application: FastAPI):
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -26,6 +27,7 @@ def create_app(user_repository: UserRepository | None = None) -> FastAPI:
         openapi_url="/openapi.json",
     )
     application.state.user_repository = user_repository
+    application.state.budget_repository = budget_repository
     application.include_router(users_router)
     application.include_router(budgets_router)
 

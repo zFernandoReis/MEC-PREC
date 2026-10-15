@@ -23,7 +23,6 @@ class CreateBudgetUseCase:
 
 
         budget = Budget(
-            budget_id=dto.budget_id,
             technical_id=dto.technical_id,
             client_id=dto.client_id,
             technical_name=dto.technical_name,

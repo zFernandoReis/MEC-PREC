@@ -1,7 +1,8 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import JSON, DateTime, Identity, Integer, String, Uuid, func
+from sqlalchemy import DateTime, Identity, Integer, String, Uuid, func
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.modules.budgets.domain.entities.budget import Budget
@@ -23,7 +24,7 @@ class BudgetModel(Base):
     technical_disponibility: Mapped[bool] = mapped_column(nullable=False)
     service_name: Mapped[str] = mapped_column(String(100), nullable=False)
     service_description: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    tools: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    tools: Mapped[list | None] = mapped_column(JSONB, nullable=True)
     amount: Mapped[float] = mapped_column(nullable=False)
     duration_service_hours: Mapped[float] = mapped_column(nullable=False)
     duration_service_days: Mapped[int] = mapped_column(nullable=False)

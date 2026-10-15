@@ -10,10 +10,14 @@ class BudgetReadResponse(BaseModel):
     technical_disponibility: bool
     service_name: str
     service_description: str | None = None
-    tools: dict[str, int] | None = None
+    tools: list | None = None
     amount: float
     duration_service_hours: float
     duration_service_days: int
 
 class BudgetResponse(BudgetReadResponse):
     system_id: UUID
+
+class BudgetListResponse(BudgetReadResponse):
+    system_id: UUID
+    budget_id: int

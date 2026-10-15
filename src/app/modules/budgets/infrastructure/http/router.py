@@ -13,6 +13,7 @@ from app.modules.budgets.infrastructure.http.dependencies import (
 from app.modules.budgets.infrastructure.http.schemas import (
     BudgetReadResponse,
     BudgetResponse,
+    BudgetListResponse,
 )
 
 router = APIRouter(prefix="/budgets", tags=["Budgets"])
@@ -25,7 +26,7 @@ async def create_budget(dto: CreateBudgetDTO, use_cases: UseCases):
     return await use_cases.create_budget.execute(dto)
 
 
-@router.get("", response_model=list[BudgetReadResponse])
+@router.get("", response_model=list[BudgetListResponse])
 async def list_budgets(
     use_cases: UseCases,
     offset: Annotated[int, Query(ge=0)] = 0,
@@ -34,12 +35,12 @@ async def list_budgets(
     return await use_cases.list_budgets.execute(offset=offset, limit=limit)
 
 
-@router.get("/{budget_id}", response_model=BudgetReadResponse)
+@router.get("/{budget_id}", response_model=BudgetListResponse)
 async def get_budget(budget_id: BudgetId, use_cases: UseCases):
     return await use_cases.get_budget.execute(budget_id)
 
 
-@router.patch("/{budget_id}", response_model=BudgetResponse)
+@router.patch("/{budget_id}", response_model=BudgetReadResponse)
 async def update_budget(budget_id: BudgetId, dto: UpdateBudgetDTO, use_cases: UseCases):
     return await use_cases.update_budget.execute(budget_id, dto)
 

@@ -1,5 +1,6 @@
 import asyncio
 
+from app.modules.budgets.infrastructure.models.budgets_model import BudgetModel
 from app.modules.users.infrastructure.models.users_model import UserModel
 from app.shared.infrastructure.database.engine import engine
 
@@ -10,6 +11,11 @@ async def create_tables() -> None:
         async with engine.begin() as connection:
             await connection.run_sync(
                 lambda sync_connection: UserModel.__table__.create(
+                    sync_connection, checkfirst=True
+                )
+            )
+            await connection.run_sync(
+                lambda sync_connection: BudgetModel.__table__.create(
                     sync_connection, checkfirst=True
                 )
             )
