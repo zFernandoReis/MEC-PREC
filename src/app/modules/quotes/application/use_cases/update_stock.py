@@ -2,6 +2,7 @@
 from app.modules.quotes.application.dtos.stock_dto import UpdateStockDTO
 from app.modules.quotes.application.ports.stock_repository import StockRepository
 from app.modules.quotes.exceptions import StockNotFoundError
+from app.shared.infrastructure.logging import logger
 
 
 class UpdateStockUseCase:
@@ -13,12 +14,12 @@ class UpdateStockUseCase:
         self.stock_repository = stock_repository
 
     async def execute(self, tool_id: str, dto: UpdateStockDTO):
+        logger.debug("Buscando item de estoque para atualização: tool_id=%s", tool_id)
 
         stock = await self.stock_repository.get_by_id(tool_id)
 
-        print(f"Updating stock with tool_id: {tool_id}, dto: {dto}, found stock: {stock}")
-
         if stock is None:
+            logger.debug("Item de estoque não encontrado para atualização: tool_id=%s", tool_id)
             raise StockNotFoundError()
 
 
@@ -28,6 +29,8 @@ class UpdateStockUseCase:
             if value is not None:
                 setattr(stock, field, value)
 
+        logger.debug("Persistindo alterações do estoque: tool_id=%s", tool_id)
         await self.stock_repository.update(stock)
+        logger.debug("Item de estoque atualizado: tool_id=%s", tool_id)
 
         return stock

@@ -1,6 +1,7 @@
 from app.modules.users.application.dtos.user_dto import CreateUserDTO
 from app.modules.users.application.services.address_service import AddressService
 from app.modules.users.domain.entities.user import User
+from app.shared.infrastructure.logging import logger
 
 
 class CreateUserUseCase:
@@ -14,6 +15,7 @@ class CreateUserUseCase:
         self.address_service = address_service
 
     async def execute(self, dto: CreateUserDTO):
+        logger.debug("Iniciando criação de usuário e consulta de endereço.")
 
         address = await self.address_service.get_address(
             cep=dto.address.cep,
@@ -31,6 +33,8 @@ class CreateUserUseCase:
             adress=address,
         )
 
+        logger.debug("Persistindo novo usuário com endereço resolvido.")
         await self.user_repository.save(user)
+        logger.debug("Usuário criado: user_id=%s", user.id)
 
         return user

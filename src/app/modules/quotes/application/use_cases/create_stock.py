@@ -2,6 +2,7 @@ import hashlib
 
 from app.modules.quotes.application.dtos.stock_dto import CreateStockDTO
 from app.modules.quotes.domain.entities.stock import Stock
+from app.shared.infrastructure.logging import logger
 
 
 class CreateStockUseCase:
@@ -12,6 +13,7 @@ class CreateStockUseCase:
         self.stock_repository = stock_repository
 
     def generate_id(self, batch: str, name: str) -> str:
+        logger.debug("Gerando identificador de estoque a partir do lote e nome normalizados.")
         # Normalização
         part_name = name.strip().upper()
         lot_number = batch.strip().upper()
@@ -29,6 +31,7 @@ class CreateStockUseCase:
         return f"{prefix}-{suffix:04d}" 
 
     async def execute(self, dto: CreateStockDTO):
+        logger.debug("Iniciando criação de item de estoque.")
 
         tool_id = self.generate_id(batch=dto.batch, name=dto.tool_name)
         stock = Stock(
@@ -42,8 +45,9 @@ class CreateStockUseCase:
             tool_id=tool_id
         )
 
-        print(f"Creating stock: {stock}")
+        logger.debug("Persistindo novo item de estoque: tool_id=%s", tool_id)
 
         await self.stock_repository.save(stock)
+        logger.debug("Item de estoque criado: tool_id=%s", stock.tool_id)
 
         return stock

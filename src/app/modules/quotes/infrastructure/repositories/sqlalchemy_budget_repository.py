@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.quotes.domain.entities.budget import Budget
 from app.modules.quotes.infrastructure.models.budgets_model import BudgetModel
 from app.modules.users.application.exceptions import UserNotFoundError
+from app.shared.infrastructure.logging import logger
 
 
 class SQLAlchemyBudgetRepository:
@@ -11,27 +12,34 @@ class SQLAlchemyBudgetRepository:
         self.session = session
 
     async def save(self, budget: Budget) -> None:
+        logger.debug("Inserindo orçamento no banco de dados.")
         model = BudgetModel.from_entity(budget)
         self.session.add(model)
         await self.session.commit()
         await self.session.refresh(model)
+        logger.debug("Inserção de orçamento concluída: budget_id=%s", model.budget_id)
         budget.budget_id = model.budget_id
         budget.create_at = model.create_at
         budget.update_at = model.update_at
 
     async def get_by_id(self, budget_id: int) -> Budget | None:
+        logger.debug("Consultando orçamento no banco: budget_id=%s", budget_id)
         model = await self.session.get(BudgetModel, budget_id)
+        logger.debug("Consulta de orçamento concluída: encontrado=%s", model is not None)
         return model.to_entity() if model is not None else None
 
     async def list(self, *, offset: int, limit: int) -> list[Budget]:
+        logger.debug("Consultando página de orçamento no banco: offset=%s, limit=%s", offset, limit)
         result = await self.session.scalars(
             select(BudgetModel).order_by(BudgetModel.budget_id).offset(offset).limit(limit)
         )
         return [model.to_entity() for model in result]
 
     async def update(self, budget: Budget) -> None:
+        logger.debug("Atualizando orçamento no banco: budget_id=%s", budget.budget_id)
         model = await self.session.get(BudgetModel, budget.budget_id)
         if model is None:
+            logger.debug("Budget não encontrado no banco: budget_id=%s", budget.budget_id)
             raise UserNotFoundError()
         model.technical_id = budget.technical_id
         model.client_id = budget.client_id
@@ -47,10 +55,14 @@ class SQLAlchemyBudgetRepository:
         await self.session.refresh(model)
         budget.create_at = model.create_at
         budget.update_at = model.update_at
+        logger.debug("Atualização de orçamento confirmada no banco: budget_id=%s", budget.budget_id)
 
     async def delete(self, budget: Budget) -> None:
+        logger.debug("Excluindo orçamento no banco: budget_id=%s", budget.budget_id)
         model = await self.session.get(BudgetModel, budget.budget_id)
         if model is None:
+            logger.debug("Budget não encontrado no banco: budget_id=%s", budget.budget_id)
             raise UserNotFoundError()
         await self.session.delete(model)
         await self.session.commit()
+        logger.debug("Exclusão de orçamento confirmada no banco: budget_id=%s", budget.budget_id)

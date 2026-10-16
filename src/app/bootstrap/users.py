@@ -10,6 +10,7 @@ from app.modules.users.application.use_cases.get_user import GetUserUseCase
 from app.modules.users.application.use_cases.list_users import ListUsersUseCase
 from app.modules.users.application.use_cases.update_user import UpdateUserUseCase
 from app.modules.users.infrastructure.clients.viacep_client import ViaCepClient
+from app.shared.infrastructure.logging import logger
 
 
 @dataclass(frozen=True)
@@ -24,6 +25,7 @@ class UsersUseCases:
 def build_users_use_cases(
     http_client: httpx.AsyncClient, user_repository: UserRepository
 ) -> UsersUseCases:
+    logger.debug("Montando dependências e casos de uso de usuários.")
     address_service = AddressService(ViaCepClient(http_client))
     return UsersUseCases(
         create_user=CreateUserUseCase(user_repository, address_service),

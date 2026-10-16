@@ -6,6 +6,7 @@ from app.modules.quotes.application.use_cases.delete_budget import DeleteBudgetU
 from app.modules.quotes.application.use_cases.get_budget import GetBudgetUseCase
 from app.modules.quotes.application.use_cases.list_budget import ListBudgetsUseCase
 from app.modules.quotes.application.use_cases.update_budget import UpdateBudgetUseCase
+from app.shared.infrastructure.logging import logger
 
 
 @dataclass(frozen=True)
@@ -20,6 +21,7 @@ class BudgetsUseCases:
 def build_budgets_use_cases(
     budget_repository: BudgetRepository
 ) -> BudgetsUseCases:
+    logger.debug("Montando dependências e casos de uso de orçamentos.")
     return BudgetsUseCases(
         create_budget=CreateBudgetUseCase(budget_repository),
         get_budget=GetBudgetUseCase(budget_repository),

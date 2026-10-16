@@ -1,5 +1,33 @@
 # MEC System
 
+## Logging compartilhado
+
+Use o mesmo objeto em todos os módulos:
+
+```python
+from app.shared.infrastructure.logging import logger
+
+logger.debug("Processando item de estoque: tool_id=%s", tool_id)
+```
+
+A saída inclui data/hora, nível, nome do arquivo, método/função, número da
+linha da chamada e o comentário informado. O contexto é capturado automaticamente.
+Também estão disponíveis `info`, `warning`, `error`, `critical` e `exception`
+(este último inclui o traceback quando usado dentro de um `except`).
+
+A API configura o console em `create_app`. O nível padrão da aplicação é
+`DEBUG`; configure `LOG_LEVEL=INFO` no `.env` para ocultar os detalhes de
+depuração. Os níveis aceitos são `DEBUG`, `INFO`, `WARNING`, `ERROR` e `CRITICAL`.
+Os casos de uso de usuários, orçamentos e estoque registram as etapas de
+processamento, resultados e registros não encontrados. Também há logs nas
+rotas, repositórios, resolução de dependências e consultas ao ViaCEP.
+As mensagens usam identificadores e contagens, sem incluir CPF, e-mail,
+endereço ou DTOs completos.
+
+Em scripts independentes, chame
+`configure_logging()` antes de registrar mensagens; use
+`configure_logging("DEBUG")` para habilitar mensagens de depuração.
+
 ## API de usuários
 
 Execute `uv run uvicorn app.main:app --app-dir src --reload`.

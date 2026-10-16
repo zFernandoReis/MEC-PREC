@@ -14,20 +14,24 @@ from app.modules.quotes.infrastructure.repositories.sqlalchemy_stock_repository 
     SQLAlchemyStockRepository,
 )
 from app.shared.infrastructure.database.engine import AsyncSessionLocal
+from app.shared.infrastructure.logging import logger
 
 
 async def get_budget_repository(request: Request) -> AsyncGenerator[BudgetRepository, None]:
     repository = request.app.state.budget_repository
     if repository is not None:
+        logger.debug("Usando repositório fornecido na configuração da aplicação.")
         yield repository
         return
 
     
 
+    logger.debug("Abrindo sessão de banco para a requisição.")
     async with AsyncSessionLocal() as session:
         try:
             yield SQLAlchemyBudgetRepository(session)
         except Exception:
+            logger.debug("Revertendo transação após falha no processamento da requisição.")
             await session.rollback()
             raise
 
@@ -42,14 +46,17 @@ def get_budgets_use_cases(
 async def get_stock_repository(request: Request) -> AsyncGenerator[StockRepository, None]:
     repository = request.app.state.stock_repository
     if repository is not None:
+        logger.debug("Usando repositório fornecido na configuração da aplicação.")
         yield repository
         return
 
     
+    logger.debug("Abrindo sessão de banco para a requisição.")
     async with AsyncSessionLocal() as session:
         try:
             yield SQLAlchemyStockRepository(session)
         except Exception:
+            logger.debug("Revertendo transação após falha no processamento da requisição.")
             await session.rollback()
             raise
 

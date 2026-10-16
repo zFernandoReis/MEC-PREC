@@ -6,6 +6,7 @@ from app.modules.quotes.application.use_cases.delete_stock import DeleteStockUse
 from app.modules.quotes.application.use_cases.get_stock import GetStockUseCase
 from app.modules.quotes.application.use_cases.list_stock import ListStocksUseCase
 from app.modules.quotes.application.use_cases.update_stock import UpdateStockUseCase
+from app.shared.infrastructure.logging import logger
 
 
 @dataclass(frozen=True)
@@ -20,6 +21,7 @@ class StockUseCases:
 def build_stock_use_cases(
     stock_repository: StockRepository
 ) -> StockUseCases:
+    logger.debug("Montando dependências e casos de uso de estoque.")
     return StockUseCases(
         create_stock=CreateStockUseCase(stock_repository),
         get_stock=GetStockUseCase(stock_repository),
