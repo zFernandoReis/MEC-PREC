@@ -1,5 +1,5 @@
-from app.modules.budgets.application.ports.budget_repository import BudgetRepository
-from app.modules.budgets.domain.entities.budget import Budget
+from app.modules.quotes.application.ports.budget_repository import BudgetRepository
+from app.modules.quotes.domain.entities.budget import Budget
 
 
 class ListBudgetsUseCase:

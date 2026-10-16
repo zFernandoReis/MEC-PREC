@@ -1,8 +1,8 @@
 from dataclasses import replace
 
-from app.modules.budgets.application.dtos.budget_dto import UpdateBudgetDTO
-from app.modules.budgets.application.ports.budget_repository import BudgetRepository
-from app.modules.budgets.exceptions import BudgetNotFoundError
+from app.modules.quotes.application.dtos.budget_dto import UpdateBudgetDTO
+from app.modules.quotes.application.ports.budget_repository import BudgetRepository
+from app.modules.quotes.exceptions import BudgetNotFoundError
 
 
 class UpdateBudgetUseCase:

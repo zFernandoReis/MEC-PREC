@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
-from app.modules.budgets.application.ports.budget_repository import BudgetRepository
-from app.modules.budgets.application.use_cases.create_budget import CreateBudgetUseCase
-from app.modules.budgets.application.use_cases.delete_budget import DeleteBudgetUseCase
-from app.modules.budgets.application.use_cases.get_budget import GetBudgetUseCase
-from app.modules.budgets.application.use_cases.list_budget import ListBudgetsUseCase
-from app.modules.budgets.application.use_cases.update_budget import UpdateBudgetUseCase
+from app.modules.quotes.application.ports.budget_repository import BudgetRepository
+from app.modules.quotes.application.use_cases.create_budget import CreateBudgetUseCase
+from app.modules.quotes.application.use_cases.delete_budget import DeleteBudgetUseCase
+from app.modules.quotes.application.use_cases.get_budget import GetBudgetUseCase
+from app.modules.quotes.application.use_cases.list_budget import ListBudgetsUseCase
+from app.modules.quotes.application.use_cases.update_budget import UpdateBudgetUseCase
 
 
 @dataclass(frozen=True)

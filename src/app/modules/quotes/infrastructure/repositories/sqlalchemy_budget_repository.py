@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.budgets.domain.entities.budget import Budget
-from app.modules.budgets.infrastructure.models.budgets_model import BudgetModel
+from app.modules.quotes.domain.entities.budget import Budget
+from app.modules.quotes.infrastructure.models.budgets_model import BudgetModel
 from app.modules.users.application.exceptions import UserNotFoundError
 
 

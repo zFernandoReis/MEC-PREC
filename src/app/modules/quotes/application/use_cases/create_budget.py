@@ -1,5 +1,5 @@
-from app.modules.budgets.application.dtos.budget_dto import CreateBudgetDTO
-from app.modules.budgets.domain.entities.budget import Budget
+from app.modules.quotes.application.dtos.budget_dto import CreateBudgetDTO
+from app.modules.quotes.domain.entities.budget import Budget
 
 
 class CreateBudgetUseCase:

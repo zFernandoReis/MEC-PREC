@@ -16,7 +16,7 @@ class Budget:
     duration_service_days: int
     budget_id: int | None = None
     service_description: str | None = None
-    tools: dict| None = None
+    tools: list| None = None
     system_id: UUID = field(default_factory=uuid4)
     create_at: datetime | None = None
     update_at: datetime | None = None

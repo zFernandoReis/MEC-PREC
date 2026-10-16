@@ -5,14 +5,16 @@ from uuid import UUID, uuid4
 
 @dataclass
 class Stock:
-    system_id: UUID = field(default_factory=uuid4)
-    tool_id: int | None
-    name: str
-    description: str | None = None
+    tool_name: str
     quantity: int
     price: float
-    batch: str | None = None
+    batch: str
+    tool_id: str | None = None
+    description: str | None = None
     replacement_time_hours: float | None = None
     replacement_time_days: int | None = None
+    system_id: UUID = field(default_factory=uuid4)
+    create_at: datetime | None = None
+    update_at: datetime | None = None
 
 

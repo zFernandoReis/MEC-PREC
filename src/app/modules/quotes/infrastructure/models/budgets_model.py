@@ -5,7 +5,7 @@ from sqlalchemy import DateTime, Identity, Integer, String, Uuid, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.modules.budgets.domain.entities.budget import Budget
+from app.modules.quotes.domain.entities.budget import Budget
 from app.shared.infrastructure.database.base import Base
 
 

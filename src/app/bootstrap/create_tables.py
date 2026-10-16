@@ -1,6 +1,7 @@
 import asyncio
 
-from app.modules.budgets.infrastructure.models.budgets_model import BudgetModel
+from app.modules.quotes.infrastructure.models.budgets_model import BudgetModel
+from app.modules.quotes.infrastructure.models.stock_model import StockModel
 from app.modules.users.infrastructure.models.users_model import UserModel
 from app.shared.infrastructure.database.engine import engine
 
@@ -19,6 +20,13 @@ async def create_tables() -> None:
                     sync_connection, checkfirst=True
                 )
             )
+            await connection.run_sync(
+                lambda sync_connection: StockModel.__table__.create(
+                    sync_connection, checkfirst=True
+                )
+            )
+
+
         print("Tabela cliente verificada/criada com sucesso.")
     finally:
         await engine.dispose()

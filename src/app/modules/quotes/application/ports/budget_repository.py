@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.modules.budgets.domain.entities.budget import Budget
+from app.modules.quotes.domain.entities.budget import Budget
 
 
 class BudgetRepository(Protocol):

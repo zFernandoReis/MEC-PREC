@@ -3,17 +3,17 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Path, Query, Response, status
 
 from app.bootstrap.budgets import BudgetsUseCases
-from app.modules.budgets.application.dtos.budget_dto import (
+from app.modules.quotes.application.dtos.budget_dto import (
     CreateBudgetDTO,
     UpdateBudgetDTO,
 )
-from app.modules.budgets.infrastructure.http.dependencies import (
+from app.modules.quotes.infrastructure.http.dependencies import (
     get_budgets_use_cases,
 )
-from app.modules.budgets.infrastructure.http.schemas import (
+from app.modules.quotes.infrastructure.http.schemas import (
+    BudgetListResponse,
     BudgetReadResponse,
     BudgetResponse,
-    BudgetListResponse,
 )
 
 router = APIRouter(prefix="/budgets", tags=["Budgets"])
