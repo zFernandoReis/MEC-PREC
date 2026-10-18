@@ -16,11 +16,16 @@ from app.modules.quotes.infrastructure.http.router_stock import (
 )
 from app.modules.users.application.exceptions import UserNotFoundError
 from app.modules.users.application.ports.user_repository import UserRepository
-from app.modules.users.infrastructure.http.router import router as users_router
+from app.modules.users.application.ports.vehicle_repository import VehicleRepository
+from app.modules.users.infrastructure.http.router_users import router as users_router
+from app.modules.users.infrastructure.http.router_vehicles import (
+    router as vehicles_router,
+)
 from app.shared.infrastructure.logging import configure_logging, logger
+from app.shared.infrastructure.database.integrity_errors import integrity_error_details
 
 
-def create_app(user_repository: UserRepository | None = None, budget_repository: BudgetRepository | None = None, stock_repository: StockRepository | None = None) -> FastAPI:
+def create_app(user_repository: UserRepository | None = None, budget_repository: BudgetRepository | None = None, stock_repository: StockRepository | None = None, vehicle_repository: VehicleRepository | None = None) -> FastAPI:
     configure_logging(settings.LOG_LEVEL)
     logger.debug("Configurando aplicação e registrando rotas HTTP.")
 
@@ -42,16 +47,18 @@ def create_app(user_repository: UserRepository | None = None, budget_repository:
     application.state.user_repository = user_repository
     application.state.budget_repository = budget_repository
     application.state.stock_repository = stock_repository
+    application.state.vehicle_repository = vehicle_repository
     application.include_router(users_router)
     application.include_router(budgets_router)
     application.include_router(stocks_router)
+    application.include_router(vehicles_router)
 
     @application.exception_handler(IntegrityError)
     async def integrity_error(request: Request, exc: IntegrityError):
         logger.debug("Tratando conflito de integridade do banco; resposta HTTP 409.")
         return JSONResponse(
             status_code=409,
-            content={"detail": "Dados em conflito com as restrições do banco de dados"},
+            content=integrity_error_details(exc),
         )
 
     @application.exception_handler(UserNotFoundError)

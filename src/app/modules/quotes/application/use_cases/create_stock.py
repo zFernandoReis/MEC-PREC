@@ -14,17 +14,13 @@ class CreateStockUseCase:
 
     def generate_id(self, batch: str, name: str) -> str:
         logger.debug("Gerando identificador de estoque a partir do lote e nome normalizados.")
-        # Normalização
         part_name = name.strip().upper()
         lot_number = batch.strip().upper()
 
-        # Combinação das duas variáveis
         content = f"{len(part_name)}:{part_name}{len(lot_number)}:{lot_number}"
 
-        # Hash determinístico
         hash_value = hashlib.sha256(content.encode("utf-8")).hexdigest()
 
-        # Formatação: 6 caracteres + 4 números
         prefix = hash_value[:6].upper()
         suffix = int(hash_value[6:14], 16) % 10000
 

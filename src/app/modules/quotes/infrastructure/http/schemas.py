@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict
 class BudgetReadResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    vehicle_id: int
     technical_name: str
     technical_disponibility: bool
     service_name: str

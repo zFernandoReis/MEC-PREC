@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CreateBudgetDTO(BaseModel):
@@ -6,6 +6,7 @@ class CreateBudgetDTO(BaseModel):
 
     technical_id: int
     client_id: int
+    vehicle_id: int = Field(gt=0)
     technical_name: str
     technical_disponibility: bool
     service_name: str

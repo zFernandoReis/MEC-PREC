@@ -2,11 +2,13 @@ from datetime import datetime
 from uuid import UUID, uuid4
 
 from sqlalchemy import DateTime, Enum, Identity, Integer, String, Uuid, func
-from sqlalchemy.orm import Mapped, composite, mapped_column
+from sqlalchemy.orm import Mapped, composite, mapped_column, relationship
 
+from app.modules.quotes.infrastructure.models.budgets_model import BudgetModel
 from app.modules.users.domain.entities.user import User
 from app.modules.users.domain.enums.user_role import UserRole
 from app.modules.users.domain.value_objects.address import Address
+from app.modules.users.infrastructure.models.vehicles_model import VehicleModel
 from app.shared.infrastructure.database.base import Base
 
 
@@ -16,6 +18,13 @@ class UserModel(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, Identity(), primary_key=True)
+    vehicles: Mapped[list[VehicleModel]] = relationship(back_populates="owner")
+    technical_budgets: Mapped[list[BudgetModel]] = relationship(
+        foreign_keys=[BudgetModel.technical_id], back_populates="technical",
+    )
+    client_budgets: Mapped[list[BudgetModel]] = relationship(
+        foreign_keys=[BudgetModel.client_id], back_populates="client",
+    )
     system_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True), default=uuid4, nullable=False, unique=True
     )

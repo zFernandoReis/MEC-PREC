@@ -28,6 +28,7 @@ class CreateBudgetUseCase:
         budget = Budget(
             technical_id=dto.technical_id,
             client_id=dto.client_id,
+            vehicle_id=dto.vehicle_id,
             technical_name=dto.technical_name,
             technical_disponibility=dto.technical_disponibility,
             service_name=dto.service_name,

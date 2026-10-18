@@ -1,12 +1,17 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, Identity, Integer, String, Uuid, func
+from sqlalchemy import DateTime, ForeignKey, Identity, Integer, String, Uuid, func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.modules.quotes.domain.entities.budget import Budget
 from app.shared.infrastructure.database.base import Base
+
+if TYPE_CHECKING:
+    from app.modules.users.infrastructure.models.users_model import UserModel
+    from app.modules.users.infrastructure.models.vehicles_model import VehicleModel
 
 
 class BudgetModel(Base):
@@ -18,8 +23,16 @@ class BudgetModel(Base):
         Uuid(as_uuid=True), default=uuid4, nullable=False, unique=True
     )
     budget_id: Mapped[int] = mapped_column(Integer, Identity(), primary_key=True)
-    technical_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    client_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    vehicle_id: Mapped[int] = mapped_column(ForeignKey("vehicles.vehicle_id"), nullable=False)
+    vehicle: Mapped["VehicleModel"] = relationship(back_populates="budgets")
+    technical_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    client_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    technical: Mapped["UserModel"] = relationship(
+        foreign_keys=[technical_id], back_populates="technical_budgets",
+    )
+    client: Mapped["UserModel"] = relationship(
+        foreign_keys=[client_id], back_populates="client_budgets",
+    )
     technical_name: Mapped[str] = mapped_column(String(100), nullable=False)
     technical_disponibility: Mapped[bool] = mapped_column(nullable=False)
     service_name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -41,6 +54,7 @@ class BudgetModel(Base):
         return cls(
             system_id=budget.system_id,
             budget_id=budget.budget_id,
+            vehicle_id=budget.vehicle_id,
             technical_id=budget.technical_id,
             client_id=budget.client_id,
             technical_name=budget.technical_name,
@@ -57,6 +71,7 @@ class BudgetModel(Base):
         return Budget(
             system_id=self.system_id,
             budget_id=self.budget_id,
+            vehicle_id=self.vehicle_id,
             technical_id=self.technical_id,
             client_id=self.client_id,
             technical_name=self.technical_name,

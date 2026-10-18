@@ -43,6 +43,7 @@ class SQLAlchemyBudgetRepository:
             raise UserNotFoundError()
         model.technical_id = budget.technical_id
         model.client_id = budget.client_id
+        model.vehicle_id = budget.vehicle_id
         model.technical_name = budget.technical_name
         model.technical_disponibility = budget.technical_disponibility
         model.service_name = budget.service_name
