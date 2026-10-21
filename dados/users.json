@@ -1,0 +1,602 @@
+[
+  {
+    "primary_name": "Ana",
+    "secondary_name": "Silva",
+    "cpf": "00000000191",
+    "email": "usuario01@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "01001000",
+      "number": "100",
+      "complement": "Apartamento 101"
+    }
+  },
+  {
+    "primary_name": "Bruno",
+    "secondary_name": "Santos",
+    "cpf": "00000000272",
+    "email": "usuario02@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "01310100",
+      "number": "101",
+      "complement": "Apartamento 102"
+    }
+  },
+  {
+    "primary_name": "Carla",
+    "secondary_name": "Oliveira",
+    "cpf": "00000000353",
+    "email": "usuario03@example.com",
+    "role": "client",
+    "address": {
+      "cep": "20040020",
+      "number": "102",
+      "complement": "Apartamento 103"
+    }
+  },
+  {
+    "primary_name": "Diego",
+    "secondary_name": "Souza",
+    "cpf": "00000000434",
+    "email": "usuario04@example.com",
+    "role": "client",
+    "address": {
+      "cep": "30140071",
+      "number": "103",
+      "complement": "Apartamento 104"
+    }
+  },
+  {
+    "primary_name": "Elisa",
+    "secondary_name": "Pereira",
+    "cpf": "00000000515",
+    "email": "usuario05@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "80010000",
+      "number": "104",
+      "complement": "Apartamento 105"
+    }
+  },
+  {
+    "primary_name": "Felipe",
+    "secondary_name": "Costa",
+    "cpf": "00000000604",
+    "email": "usuario06@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "90010000",
+      "number": "105",
+      "complement": "Apartamento 106"
+    }
+  },
+  {
+    "primary_name": "Gabriela",
+    "secondary_name": "Rodrigues",
+    "cpf": "00000000787",
+    "email": "usuario07@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "88010000",
+      "number": "106",
+      "complement": "Apartamento 107"
+    }
+  },
+  {
+    "primary_name": "Henrique",
+    "secondary_name": "Almeida",
+    "cpf": "00000000868",
+    "email": "usuario08@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "74003010",
+      "number": "107",
+      "complement": "Apartamento 108"
+    }
+  },
+  {
+    "primary_name": "Isabela",
+    "secondary_name": "Nascimento",
+    "cpf": "00000000949",
+    "email": "usuario09@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "50030000",
+      "number": "108",
+      "complement": "Apartamento 109"
+    }
+  },
+  {
+    "primary_name": "João",
+    "secondary_name": "Lima",
+    "cpf": "00000001082",
+    "email": "usuario10@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "60060000",
+      "number": "109",
+      "complement": "Apartamento 110"
+    }
+  },
+  {
+    "primary_name": "Karina",
+    "secondary_name": "Araújo",
+    "cpf": "00000001163",
+    "email": "usuario11@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "65010000",
+      "number": "110",
+      "complement": "Apartamento 111"
+    }
+  },
+  {
+    "primary_name": "Lucas",
+    "secondary_name": "Fernandes",
+    "cpf": "00000001244",
+    "email": "usuario12@example.com",
+    "role": "client",
+    "address": {
+      "cep": "64000040",
+      "number": "111",
+      "complement": "Apartamento 112"
+    }
+  },
+  {
+    "primary_name": "Mariana",
+    "secondary_name": "Carvalho",
+    "cpf": "00000001325",
+    "email": "usuario13@example.com",
+    "role": "admin",
+    "address": {
+      "cep": "66010000",
+      "number": "112",
+      "complement": "Apartamento 113"
+    }
+  },
+  {
+    "primary_name": "Nicolas",
+    "secondary_name": "Gomes",
+    "cpf": "00000001406",
+    "email": "usuario14@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "69005070",
+      "number": "113",
+      "complement": "Apartamento 114"
+    }
+  },
+  {
+    "primary_name": "Olívia",
+    "secondary_name": "Martins",
+    "cpf": "00000001597",
+    "email": "usuario15@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "77001002",
+      "number": "114",
+      "complement": "Apartamento 115"
+    }
+  },
+  {
+    "primary_name": "Pedro",
+    "secondary_name": "Rocha",
+    "cpf": "00000001678",
+    "email": "usuario16@example.com",
+    "role": "financial",
+    "address": {
+      "cep": "79002000",
+      "number": "115",
+      "complement": "Apartamento 116"
+    }
+  },
+  {
+    "primary_name": "Quitéria",
+    "secondary_name": "Ribeiro",
+    "cpf": "00000001759",
+    "email": "usuario17@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "78005000",
+      "number": "116",
+      "complement": "Apartamento 117"
+    }
+  },
+  {
+    "primary_name": "Rafael",
+    "secondary_name": "Alves",
+    "cpf": "00000001830",
+    "email": "usuario18@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "57020000",
+      "number": "117",
+      "complement": "Apartamento 118"
+    }
+  },
+  {
+    "primary_name": "Sofia",
+    "secondary_name": "Monteiro",
+    "cpf": "00000001910",
+    "email": "usuario19@example.com",
+    "role": "financial",
+    "address": {
+      "cep": "59025000",
+      "number": "118",
+      "complement": "Apartamento 119"
+    }
+  },
+  {
+    "primary_name": "Tiago",
+    "secondary_name": "Mendes",
+    "cpf": "00000002054",
+    "email": "usuario20@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "58010000",
+      "number": "119",
+      "complement": "Apartamento 120"
+    }
+  },
+  {
+    "primary_name": "Úrsula",
+    "secondary_name": "Barbosa",
+    "cpf": "00000002135",
+    "email": "usuario21@example.com",
+    "role": "financial",
+    "address": {
+      "cep": "49010000",
+      "number": "120",
+      "complement": "Apartamento 121"
+    }
+  },
+  {
+    "primary_name": "Vinícius",
+    "secondary_name": "Freitas",
+    "cpf": "00000002216",
+    "email": "usuario22@example.com",
+    "role": "financial",
+    "address": {
+      "cep": "29010001",
+      "number": "121",
+      "complement": "Apartamento 122"
+    }
+  },
+  {
+    "primary_name": "Wanda",
+    "secondary_name": "Dias",
+    "cpf": "00000002305",
+    "email": "usuario23@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "68900073",
+      "number": "122",
+      "complement": "Apartamento 123"
+    }
+  },
+  {
+    "primary_name": "Xavier",
+    "secondary_name": "Castro",
+    "cpf": "00000002488",
+    "email": "usuario24@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "69900060",
+      "number": "123",
+      "complement": "Apartamento 124"
+    }
+  },
+  {
+    "primary_name": "Yasmin",
+    "secondary_name": "Cardoso",
+    "cpf": "00000002569",
+    "email": "usuario25@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "76801059",
+      "number": "124",
+      "complement": "Apartamento 125"
+    }
+  },
+  {
+    "primary_name": "André",
+    "secondary_name": "Teixeira",
+    "cpf": "00000002640",
+    "email": "usuario26@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "01001000",
+      "number": "125",
+      "complement": "Apartamento 126"
+    }
+  },
+  {
+    "primary_name": "Bianca",
+    "secondary_name": "Correia",
+    "cpf": "00000002720",
+    "email": "usuario27@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "01310100",
+      "number": "126",
+      "complement": "Apartamento 127"
+    }
+  },
+  {
+    "primary_name": "Caio",
+    "secondary_name": "Moreira",
+    "cpf": "00000002801",
+    "email": "usuario28@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "20040020",
+      "number": "127",
+      "complement": "Apartamento 128"
+    }
+  },
+  {
+    "primary_name": "Daniela",
+    "secondary_name": "Cavalcanti",
+    "cpf": "00000002992",
+    "email": "usuario29@example.com",
+    "role": "financial",
+    "address": {
+      "cep": "30140071",
+      "number": "128",
+      "complement": "Apartamento 129"
+    }
+  },
+  {
+    "primary_name": "Eduardo",
+    "secondary_name": "Batista",
+    "cpf": "00000003026",
+    "email": "usuario30@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "80010000",
+      "number": "129",
+      "complement": "Apartamento 130"
+    }
+  },
+  {
+    "primary_name": "Fernanda",
+    "secondary_name": "Moura",
+    "cpf": "00000003107",
+    "email": "usuario31@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "90010000",
+      "number": "130",
+      "complement": "Apartamento 131"
+    }
+  },
+  {
+    "primary_name": "Gustavo",
+    "secondary_name": "Campos",
+    "cpf": "00000003298",
+    "email": "usuario32@example.com",
+    "role": "client",
+    "address": {
+      "cep": "88010000",
+      "number": "131",
+      "complement": "Apartamento 132"
+    }
+  },
+  {
+    "primary_name": "Helena",
+    "secondary_name": "Azevedo",
+    "cpf": "00000003379",
+    "email": "usuario33@example.com",
+    "role": "client",
+    "address": {
+      "cep": "74003010",
+      "number": "132",
+      "complement": "Apartamento 133"
+    }
+  },
+  {
+    "primary_name": "Igor",
+    "secondary_name": "Dantas",
+    "cpf": "00000003450",
+    "email": "usuario34@example.com",
+    "role": "financial",
+    "address": {
+      "cep": "50030000",
+      "number": "133",
+      "complement": "Apartamento 134"
+    }
+  },
+  {
+    "primary_name": "Júlia",
+    "secondary_name": "Farias",
+    "cpf": "00000003530",
+    "email": "usuario35@example.com",
+    "role": "client",
+    "address": {
+      "cep": "60060000",
+      "number": "134",
+      "complement": "Apartamento 135"
+    }
+  },
+  {
+    "primary_name": "Kevin",
+    "secondary_name": "Rezende",
+    "cpf": "00000003611",
+    "email": "usuario36@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "65010000",
+      "number": "135",
+      "complement": "Apartamento 136"
+    }
+  },
+  {
+    "primary_name": "Larissa",
+    "secondary_name": "Borges",
+    "cpf": "00000003700",
+    "email": "usuario37@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "64000040",
+      "number": "136",
+      "complement": "Apartamento 137"
+    }
+  },
+  {
+    "primary_name": "Mateus",
+    "secondary_name": "Pires",
+    "cpf": "00000003883",
+    "email": "usuario38@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "66010000",
+      "number": "137",
+      "complement": "Apartamento 138"
+    }
+  },
+  {
+    "primary_name": "Natália",
+    "secondary_name": "Cunha",
+    "cpf": "00000003964",
+    "email": "usuario39@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "69005070",
+      "number": "138",
+      "complement": "Apartamento 139"
+    }
+  },
+  {
+    "primary_name": "Otávio",
+    "secondary_name": "Machado",
+    "cpf": "00000004006",
+    "email": "usuario40@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "77001002",
+      "number": "139",
+      "complement": "Apartamento 140"
+    }
+  },
+  {
+    "primary_name": "Patrícia",
+    "secondary_name": "Neves",
+    "cpf": "00000004189",
+    "email": "usuario41@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "79002000",
+      "number": "140",
+      "complement": "Apartamento 141"
+    }
+  },
+  {
+    "primary_name": "Renato",
+    "secondary_name": "Tavares",
+    "cpf": "00000004260",
+    "email": "usuario42@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "78005000",
+      "number": "141",
+      "complement": "Apartamento 142"
+    }
+  },
+  {
+    "primary_name": "Sara",
+    "secondary_name": "Duarte",
+    "cpf": "00000004340",
+    "email": "usuario43@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "57020000",
+      "number": "142",
+      "complement": "Apartamento 143"
+    }
+  },
+  {
+    "primary_name": "Tomás",
+    "secondary_name": "Vieira",
+    "cpf": "00000004421",
+    "email": "usuario44@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "59025000",
+      "number": "143",
+      "complement": "Apartamento 144"
+    }
+  },
+  {
+    "primary_name": "Valentina",
+    "secondary_name": "Ramos",
+    "cpf": "00000004502",
+    "email": "usuario45@example.com",
+    "role": "manager",
+    "address": {
+      "cep": "58010000",
+      "number": "144",
+      "complement": "Apartamento 145"
+    }
+  },
+  {
+    "primary_name": "William",
+    "secondary_name": "Antunes",
+    "cpf": "00000004693",
+    "email": "usuario46@example.com",
+    "role": "financial",
+    "address": {
+      "cep": "49010000",
+      "number": "145",
+      "complement": "Apartamento 146"
+    }
+  },
+  {
+    "primary_name": "Yuri",
+    "secondary_name": "Guimarães",
+    "cpf": "00000004774",
+    "email": "usuario47@example.com",
+    "role": "admin",
+    "address": {
+      "cep": "29010001",
+      "number": "146",
+      "complement": "Apartamento 147"
+    }
+  },
+  {
+    "primary_name": "Aline",
+    "secondary_name": "Nunes",
+    "cpf": "00000004855",
+    "email": "usuario48@example.com",
+    "role": "financial",
+    "address": {
+      "cep": "68900073",
+      "number": "147",
+      "complement": "Apartamento 148"
+    }
+  },
+  {
+    "primary_name": "Cecília",
+    "secondary_name": "Melo",
+    "cpf": "00000004936",
+    "email": "usuario49@example.com",
+    "role": "client",
+    "address": {
+      "cep": "69900060",
+      "number": "148",
+      "complement": "Apartamento 149"
+    }
+  },
+  {
+    "primary_name": "Davi",
+    "secondary_name": "Peixoto",
+    "cpf": "00000005070",
+    "email": "usuario50@example.com",
+    "role": "technical",
+    "address": {
+      "cep": "76801059",
+      "number": "149",
+      "complement": "Apartamento 150"
+    }
+  }
+]

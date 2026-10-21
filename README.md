@@ -1,5 +1,57 @@
 # MEC System
 
+## Ingestão dos arquivos JSON pela API
+
+Com a API em execução, importe os arquivos de `dados/`:
+
+```powershell
+uv run python -m app.bootstrap.ingest_json --dry-run
+uv run python -m app.bootstrap.ingest_json --base-url http://127.0.0.1:8000
+```
+
+O script valida todos os arquivos selecionados antes do primeiro envio e faz
+um POST por registro: `users.json` → `/users`, `stock.json` → `/stock`,
+`vehicles.json` → `/vehicles` e `budgets.json` → `/budgets`, nessa ordem.
+Não acessa o banco diretamente. Aceita `--data-dir`, `--timeout` e seleção:
+
+```powershell
+uv run python -m app.bootstrap.ingest_json --resources users
+uv run python -m app.bootstrap.ingest_json --data-dir ./dados --resources stock vehicles
+```
+
+Quando usuários e veículos são importados juntos, `owner_id`, `technical_id`
+e `client_id` nos arquivos representam a posição do usuário em `users.json`,
+começando em 1. O script substitui essas referências pelos IDs retornados pela
+API. Da mesma forma, se veículos e orçamentos forem selecionados juntos,
+`vehicle_id` representa a posição em `vehicles.json` e é substituído pelo ID
+criado. Quando o arquivo referenciado não é selecionado, informe os IDs reais
+já existentes no banco. A ordem dos arquivos não deve ser alterada sem ajustar
+essas referências.
+
+Os arquivos devem seguir os DTOs de criação da API. Nos dados de exemplo,
+os CPFs fictícios possuem dígitos verificadores calculados para passar pela
+validação de domínio da API.
+Os 50 endereços da amostra usam 25 CEPs distintos de 24 UFs, cobrindo as
+cinco regiões do Brasil, confirmados no ViaCEP em 21/10/2026. Cada CEP aparece
+em dois usuários; número e complemento foram preservados como dados fictícios.
+`duration_service_days` e `replacement_time_days` foram arredondados para cima
+para representar dias inteiros; os valores exatos em horas foram preservados.
+`engine_capacity` está em cm³ inteiros (por exemplo, 1,6 L → 1600 cm³).
+Os tipos `carro`, `suv` e `picape` foram classificados como `car`, conforme
+o enum atual, e `gasolina` foi convertido em `gasoline`. Os demais combustíveis
+aceitos são `ethanol`, `flex`, `diesel`, `electric` e `hybrid`.
+Nos orçamentos de exemplo, `vehicle_id` distribui os serviços entre os veículos
+do respectivo cliente, seguindo a ordem de `vehicles.json` e reiniciando a
+distribuição quando os veículos desse cliente se esgotam.
+O script não arredonda nem inventa relações entre dados durante a ingestão.
+O `--dry-run` valida o formato local, sem consultar o servidor; regras de
+domínio, CEP, conflitos e referências no banco são verificadas pela API.
+
+Em erro de validação, nenhum registro é enviado. Em erro HTTP, o script para
+e sai com código 1; os POSTs anteriores permanecem gravados. Não há repetição
+automática nem deduplicação: confira a API antes de executar novamente,
+especialmente após timeout, pois o último POST pode ter sido persistido.
+
 ## Logging compartilhado
 
 Use o mesmo objeto em todos os módulos:

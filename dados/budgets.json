@@ -1,0 +1,1270 @@
+[
+  {
+    "technical_id": 1,
+    "client_id": 49,
+    "vehicle_id": 7,
+    "technical_name": "Ana Silva",
+    "technical_disponibility": true,
+    "service_name": "Troca de filtro de óleo",
+    "service_description": "Substituição do filtro de óleo e verificação de vazamentos.",
+    "tools": [
+      {
+        "tool_name": "Filtro de óleo",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Chave de catraca",
+        "quantity": 1
+      }
+    ],
+    "amount": 149.8,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 6,
+    "client_id": 3,
+    "vehicle_id": 1,
+    "technical_name": "Felipe Costa",
+    "technical_disponibility": false,
+    "service_name": "Troca de filtro de ar",
+    "service_description": "Substituição do filtro de ar e inspeção da caixa de admissão.",
+    "tools": [
+      {
+        "tool_name": "Filtro de ar do motor",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Chave Phillips",
+        "quantity": 6
+      }
+    ],
+    "amount": 159.8,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 7,
+    "client_id": 49,
+    "vehicle_id": 14,
+    "technical_name": "Gabriela Rodrigues",
+    "technical_disponibility": true,
+    "service_name": "Troca de filtro de combustível",
+    "service_description": "Substituição do filtro e inspeção das conexões de combustível.",
+    "tools": [
+      {
+        "tool_name": "Filtro de combustível",
+        "quantity": 7
+      },
+      {
+        "tool_name": "Alicate para abraçadeiras",
+        "quantity": 5
+      }
+    ],
+    "amount": 399.3,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 8,
+    "client_id": 3,
+    "vehicle_id": 8,
+    "technical_name": "Henrique Almeida",
+    "technical_disponibility": false,
+    "service_name": "Troca de filtro de cabine",
+    "service_description": "Substituição do filtro de cabine e inspeção do alojamento.",
+    "tools": [
+      {
+        "tool_name": "Filtro de cabine",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Chave Torx",
+        "quantity": 10
+      }
+    ],
+    "amount": 429.2,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 9,
+    "client_id": 35,
+    "vehicle_id": 6,
+    "technical_name": "Isabela Nascimento",
+    "technical_disponibility": false,
+    "service_name": "Revisão da ignição",
+    "service_description": "Inspeção e substituição de componentes do sistema de ignição.",
+    "tools": [
+      {
+        "tool_name": "Vela de ignição",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Bobina de ignição",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 5
+      }
+    ],
+    "amount": 2188.3,
+    "duration_service_hours": 2.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 10,
+    "client_id": 12,
+    "vehicle_id": 3,
+    "technical_name": "João Lima",
+    "technical_disponibility": false,
+    "service_name": "Troca de pastilhas dianteiras",
+    "service_description": "Substituição de pastilhas e inspeção do conjunto de freio dianteiro.",
+    "tools": [
+      {
+        "tool_name": "Pastilha de freio dianteira",
+        "quantity": 6
+      },
+      {
+        "tool_name": "Chave de roda",
+        "quantity": 4
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 1
+      }
+    ],
+    "amount": 1019.4,
+    "duration_service_hours": 1.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 11,
+    "client_id": 32,
+    "vehicle_id": 4,
+    "technical_name": "Karina Araújo",
+    "technical_disponibility": false,
+    "service_name": "Troca de discos dianteiros",
+    "service_description": "Substituição dos discos de freio e inspeção das pinças.",
+    "tools": [
+      {
+        "tool_name": "Disco de freio dianteiro",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Pastilha de freio dianteira",
+        "quantity": 4
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 5
+      }
+    ],
+    "amount": 2568.8,
+    "duration_service_hours": 2.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 15,
+    "client_id": 32,
+    "vehicle_id": 11,
+    "technical_name": "Olívia Martins",
+    "technical_disponibility": false,
+    "service_name": "Revisão de freios traseiros",
+    "service_description": "Inspeção do sistema a tambor e substituição dos componentes indicados.",
+    "tools": [
+      {
+        "tool_name": "Sapata de freio traseira",
+        "quantity": 6
+      },
+      {
+        "tool_name": "Cilindro de roda",
+        "quantity": 7
+      },
+      {
+        "tool_name": "Alicate universal",
+        "quantity": 2
+      }
+    ],
+    "amount": 1548.7,
+    "duration_service_hours": 2.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 17,
+    "client_id": 35,
+    "vehicle_id": 13,
+    "technical_name": "Quitéria Ribeiro",
+    "technical_disponibility": false,
+    "service_name": "Troca de amortecedores dianteiros",
+    "service_description": "Substituição dos amortecedores e inspeção dos apoios da suspensão.",
+    "tools": [
+      {
+        "tool_name": "Amortecedor dianteiro",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Compressor de molas",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 6
+      }
+    ],
+    "amount": 3149.2,
+    "duration_service_hours": 3.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 18,
+    "client_id": 33,
+    "vehicle_id": 5,
+    "technical_name": "Rafael Alves",
+    "technical_disponibility": false,
+    "service_name": "Troca de amortecedores traseiros",
+    "service_description": "Substituição dos amortecedores e verificação de suas fixações.",
+    "tools": [
+      {
+        "tool_name": "Amortecedor traseiro",
+        "quantity": 6
+      },
+      {
+        "tool_name": "Macaco hidráulico",
+        "quantity": 10
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 10
+      }
+    ],
+    "amount": 1739.4,
+    "duration_service_hours": 2.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 23,
+    "client_id": 3,
+    "vehicle_id": 15,
+    "technical_name": "Wanda Dias",
+    "technical_disponibility": true,
+    "service_name": "Revisão de suspensão",
+    "service_description": "Inspeção das articulações e substituição de componentes da suspensão.",
+    "tools": [
+      {
+        "tool_name": "Bieleta da suspensão",
+        "quantity": 3
+      },
+      {
+        "tool_name": "Bucha de bandeja",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Pivô de suspensão",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 6
+      }
+    ],
+    "amount": 1298.7,
+    "duration_service_hours": 3.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 24,
+    "client_id": 35,
+    "vehicle_id": 20,
+    "technical_name": "Xavier Castro",
+    "technical_disponibility": false,
+    "service_name": "Troca de terminal de direção",
+    "service_description": "Substituição do terminal e conferência das fixações.",
+    "tools": [
+      {
+        "tool_name": "Terminal de direção",
+        "quantity": 1
+      },
+      {
+        "tool_name": "Chave combinada 17 mm",
+        "quantity": 3
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 8
+      }
+    ],
+    "amount": 259.9,
+    "duration_service_hours": 1.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 26,
+    "client_id": 3,
+    "vehicle_id": 22,
+    "technical_name": "André Teixeira",
+    "technical_disponibility": true,
+    "service_name": "Troca de rolamento de roda",
+    "service_description": "Remoção do rolamento desgastado e instalação de uma nova unidade.",
+    "tools": [
+      {
+        "tool_name": "Rolamento de roda",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Extrator de rolamento",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 10
+      }
+    ],
+    "amount": 1629.1,
+    "duration_service_hours": 2.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 30,
+    "client_id": 32,
+    "vehicle_id": 18,
+    "technical_name": "Eduardo Batista",
+    "technical_disponibility": true,
+    "service_name": "Troca de correia dentada",
+    "service_description": "Substituição da correia e do tensor com conferência do sincronismo.",
+    "tools": [
+      {
+        "tool_name": "Correia dentada",
+        "quantity": 4
+      },
+      {
+        "tool_name": "Tensor da correia dentada",
+        "quantity": 7
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 3
+      }
+    ],
+    "amount": 1938.9,
+    "duration_service_hours": 4.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 36,
+    "client_id": 3,
+    "vehicle_id": 29,
+    "technical_name": "Kevin Rezende",
+    "technical_disponibility": false,
+    "service_name": "Troca de correia de acessórios",
+    "service_description": "Substituição da correia e inspeção das polias de acessórios.",
+    "tools": [
+      {
+        "tool_name": "Correia de acessórios",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Chave combinada 13 mm",
+        "quantity": 6
+      }
+    ],
+    "amount": 749.1,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 38,
+    "client_id": 33,
+    "vehicle_id": 12,
+    "technical_name": "Mateus Pires",
+    "technical_disponibility": false,
+    "service_name": "Troca de bomba de água",
+    "service_description": "Substituição da bomba e verificação do circuito de arrefecimento.",
+    "tools": [
+      {
+        "tool_name": "Bomba de água",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Alicate para abraçadeiras",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 1
+      }
+    ],
+    "amount": 759.8,
+    "duration_service_hours": 3.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 44,
+    "client_id": 32,
+    "vehicle_id": 25,
+    "technical_name": "Tomás Vieira",
+    "technical_disponibility": false,
+    "service_name": "Revisão do arrefecimento",
+    "service_description": "Inspeção do sistema e substituição de componentes com desgaste.",
+    "tools": [
+      {
+        "tool_name": "Válvula termostática",
+        "quantity": 10
+      },
+      {
+        "tool_name": "Mangueira do radiador",
+        "quantity": 5
+      },
+      {
+        "tool_name": "Radiador",
+        "quantity": 10
+      },
+      {
+        "tool_name": "Alicate para abraçadeiras",
+        "quantity": 10
+      }
+    ],
+    "amount": 6137.5,
+    "duration_service_hours": 3.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 50,
+    "client_id": 32,
+    "vehicle_id": 32,
+    "technical_name": "Davi Peixoto",
+    "technical_disponibility": false,
+    "service_name": "Troca de embreagem",
+    "service_description": "Remoção da transmissão e substituição do conjunto de embreagem.",
+    "tools": [
+      {
+        "tool_name": "Kit de embreagem",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Macaco hidráulico",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Cavalete automotivo",
+        "quantity": 1
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 4
+      }
+    ],
+    "amount": 2149.8,
+    "duration_service_hours": 6.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 1,
+    "client_id": 35,
+    "vehicle_id": 27,
+    "technical_name": "Ana Silva",
+    "technical_disponibility": true,
+    "service_name": "Troca de bateria",
+    "service_description": "Substituição da bateria e verificação da tensão de alimentação.",
+    "tools": [
+      {
+        "tool_name": "Bateria automotiva 60 Ah",
+        "quantity": 10
+      },
+      {
+        "tool_name": "Chave combinada 10 mm",
+        "quantity": 7
+      },
+      {
+        "tool_name": "Multímetro digital",
+        "quantity": 1
+      }
+    ],
+    "amount": 5069.0,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 6,
+    "client_id": 49,
+    "vehicle_id": 21,
+    "technical_name": "Felipe Costa",
+    "technical_disponibility": false,
+    "service_name": "Troca de alternador",
+    "service_description": "Substituição do alternador e teste do sistema de carga.",
+    "tools": [
+      {
+        "tool_name": "Alternador",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Multímetro digital",
+        "quantity": 3
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 5
+      }
+    ],
+    "amount": 7499.2,
+    "duration_service_hours": 2.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 7,
+    "client_id": 3,
+    "vehicle_id": 36,
+    "technical_name": "Gabriela Rodrigues",
+    "technical_disponibility": true,
+    "service_name": "Troca de motor de partida",
+    "service_description": "Substituição do motor de partida e teste de funcionamento.",
+    "tools": [
+      {
+        "tool_name": "Motor de partida",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Chave de catraca",
+        "quantity": 6
+      },
+      {
+        "tool_name": "Multímetro digital",
+        "quantity": 9
+      }
+    ],
+    "amount": 1559.8,
+    "duration_service_hours": 2.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 8,
+    "client_id": 35,
+    "vehicle_id": 34,
+    "technical_name": "Henrique Almeida",
+    "technical_disponibility": false,
+    "service_name": "Diagnóstico eletrônico",
+    "service_description": "Leitura de falhas e análise de parâmetros eletrônicos do veículo.",
+    "tools": [
+      {
+        "tool_name": "Scanner automotivo",
+        "quantity": 7
+      },
+      {
+        "tool_name": "Multímetro digital",
+        "quantity": 6
+      }
+    ],
+    "amount": 150.0,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 9,
+    "client_id": 49,
+    "vehicle_id": 28,
+    "technical_name": "Isabela Nascimento",
+    "technical_disponibility": false,
+    "service_name": "Troca de sensor de temperatura",
+    "service_description": "Substituição do sensor e conferência da leitura de temperatura.",
+    "tools": [
+      {
+        "tool_name": "Sensor de temperatura do motor",
+        "quantity": 5
+      },
+      {
+        "tool_name": "Scanner automotivo",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Chave combinada 17 mm",
+        "quantity": 9
+      }
+    ],
+    "amount": 539.5,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 10,
+    "client_id": 33,
+    "vehicle_id": 19,
+    "technical_name": "João Lima",
+    "technical_disponibility": false,
+    "service_name": "Troca de cabos de vela",
+    "service_description": "Substituição dos cabos de ignição e teste de funcionamento.",
+    "tools": [
+      {
+        "tool_name": "Cabo de vela",
+        "quantity": 4
+      },
+      {
+        "tool_name": "Alicate universal",
+        "quantity": 8
+      }
+    ],
+    "amount": 589.6,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 11,
+    "client_id": 35,
+    "vehicle_id": 41,
+    "technical_name": "Karina Araújo",
+    "technical_disponibility": false,
+    "service_name": "Inspeção de rodas e fixações",
+    "service_description": "Inspeção visual das rodas e verificação de torque dos fixadores.",
+    "tools": [
+      {
+        "tool_name": "Chave de roda",
+        "quantity": 6
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 3
+      },
+      {
+        "tool_name": "Macaco hidráulico",
+        "quantity": 1
+      }
+    ],
+    "amount": 90.0,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 15,
+    "client_id": 3,
+    "vehicle_id": 43,
+    "technical_name": "Olívia Martins",
+    "technical_disponibility": false,
+    "service_name": "Troca de filtro de óleo",
+    "service_description": "Substituição do filtro de óleo e verificação de vazamentos.",
+    "tools": [
+      {
+        "tool_name": "Filtro de óleo",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Chave de catraca",
+        "quantity": 6
+      }
+    ],
+    "amount": 394.1,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 17,
+    "client_id": 35,
+    "vehicle_id": 48,
+    "technical_name": "Quitéria Ribeiro",
+    "technical_disponibility": false,
+    "service_name": "Troca de filtro de ar",
+    "service_description": "Substituição do filtro de ar e inspeção da caixa de admissão.",
+    "tools": [
+      {
+        "tool_name": "Filtro de ar do motor",
+        "quantity": 3
+      },
+      {
+        "tool_name": "Chave Phillips",
+        "quantity": 7
+      }
+    ],
+    "amount": 209.7,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 18,
+    "client_id": 35,
+    "vehicle_id": 6,
+    "technical_name": "Rafael Alves",
+    "technical_disponibility": false,
+    "service_name": "Troca de filtro de combustível",
+    "service_description": "Substituição do filtro e inspeção das conexões de combustível.",
+    "tools": [
+      {
+        "tool_name": "Filtro de combustível",
+        "quantity": 10
+      },
+      {
+        "tool_name": "Alicate para abraçadeiras",
+        "quantity": 1
+      }
+    ],
+    "amount": 519.0,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 23,
+    "client_id": 32,
+    "vehicle_id": 39,
+    "technical_name": "Wanda Dias",
+    "technical_disponibility": true,
+    "service_name": "Troca de filtro de cabine",
+    "service_description": "Substituição do filtro de cabine e inspeção do alojamento.",
+    "tools": [
+      {
+        "tool_name": "Filtro de cabine",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Chave Torx",
+        "quantity": 1
+      }
+    ],
+    "amount": 429.2,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 24,
+    "client_id": 32,
+    "vehicle_id": 46,
+    "technical_name": "Xavier Castro",
+    "technical_disponibility": false,
+    "service_name": "Revisão da ignição",
+    "service_description": "Inspeção e substituição de componentes do sistema de ignição.",
+    "tools": [
+      {
+        "tool_name": "Vela de ignição",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Bobina de ignição",
+        "quantity": 3
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 7
+      }
+    ],
+    "amount": 1048.9,
+    "duration_service_hours": 2.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 26,
+    "client_id": 4,
+    "vehicle_id": 2,
+    "technical_name": "André Teixeira",
+    "technical_disponibility": true,
+    "service_name": "Troca de pastilhas dianteiras",
+    "service_description": "Substituição de pastilhas e inspeção do conjunto de freio dianteiro.",
+    "tools": [
+      {
+        "tool_name": "Pastilha de freio dianteira",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Chave de roda",
+        "quantity": 3
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 1
+      }
+    ],
+    "amount": 1299.2,
+    "duration_service_hours": 1.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 30,
+    "client_id": 12,
+    "vehicle_id": 10,
+    "technical_name": "Eduardo Batista",
+    "technical_disponibility": true,
+    "service_name": "Troca de discos dianteiros",
+    "service_description": "Substituição dos discos de freio e inspeção das pinças.",
+    "tools": [
+      {
+        "tool_name": "Disco de freio dianteiro",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Pastilha de freio dianteira",
+        "quantity": 4
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 1
+      }
+    ],
+    "amount": 1249.4,
+    "duration_service_hours": 2.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 36,
+    "client_id": 35,
+    "vehicle_id": 13,
+    "technical_name": "Kevin Rezende",
+    "technical_disponibility": false,
+    "service_name": "Revisão de freios traseiros",
+    "service_description": "Inspeção do sistema a tambor e substituição dos componentes indicados.",
+    "tools": [
+      {
+        "tool_name": "Sapata de freio traseira",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Cilindro de roda",
+        "quantity": 8
+      },
+      {
+        "tool_name": "Alicate universal",
+        "quantity": 7
+      }
+    ],
+    "amount": 1099.0,
+    "duration_service_hours": 2.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 38,
+    "client_id": 49,
+    "vehicle_id": 35,
+    "technical_name": "Mateus Pires",
+    "technical_disponibility": false,
+    "service_name": "Troca de amortecedores dianteiros",
+    "service_description": "Substituição dos amortecedores e inspeção dos apoios da suspensão.",
+    "tools": [
+      {
+        "tool_name": "Amortecedor dianteiro",
+        "quantity": 10
+      },
+      {
+        "tool_name": "Compressor de molas",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 2
+      }
+    ],
+    "amount": 3849.0,
+    "duration_service_hours": 3.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 44,
+    "client_id": 4,
+    "vehicle_id": 9,
+    "technical_name": "Tomás Vieira",
+    "technical_disponibility": false,
+    "service_name": "Troca de amortecedores traseiros",
+    "service_description": "Substituição dos amortecedores e verificação de suas fixações.",
+    "tools": [
+      {
+        "tool_name": "Amortecedor traseiro",
+        "quantity": 7
+      },
+      {
+        "tool_name": "Macaco hidráulico",
+        "quantity": 1
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 4
+      }
+    ],
+    "amount": 1989.3,
+    "duration_service_hours": 2.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 50,
+    "client_id": 33,
+    "vehicle_id": 26,
+    "technical_name": "Davi Peixoto",
+    "technical_disponibility": false,
+    "service_name": "Revisão de suspensão",
+    "service_description": "Inspeção das articulações e substituição de componentes da suspensão.",
+    "tools": [
+      {
+        "tool_name": "Bieleta da suspensão",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Bucha de bandeja",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Pivô de suspensão",
+        "quantity": 6
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 9
+      }
+    ],
+    "amount": 1478.3,
+    "duration_service_hours": 3.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 1,
+    "client_id": 33,
+    "vehicle_id": 33,
+    "technical_name": "Ana Silva",
+    "technical_disponibility": true,
+    "service_name": "Troca de terminal de direção",
+    "service_description": "Substituição do terminal e conferência das fixações.",
+    "tools": [
+      {
+        "tool_name": "Terminal de direção",
+        "quantity": 1
+      },
+      {
+        "tool_name": "Chave combinada 17 mm",
+        "quantity": 3
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 4
+      }
+    ],
+    "amount": 259.9,
+    "duration_service_hours": 1.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 6,
+    "client_id": 33,
+    "vehicle_id": 40,
+    "technical_name": "Felipe Costa",
+    "technical_disponibility": false,
+    "service_name": "Troca de rolamento de roda",
+    "service_description": "Remoção do rolamento desgastado e instalação de uma nova unidade.",
+    "tools": [
+      {
+        "tool_name": "Rolamento de roda",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Extrator de rolamento",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 9
+      }
+    ],
+    "amount": 579.8,
+    "duration_service_hours": 2.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 7,
+    "client_id": 12,
+    "vehicle_id": 17,
+    "technical_name": "Gabriela Rodrigues",
+    "technical_disponibility": true,
+    "service_name": "Troca de correia dentada",
+    "service_description": "Substituição da correia e do tensor com conferência do sincronismo.",
+    "tools": [
+      {
+        "tool_name": "Correia dentada",
+        "quantity": 1
+      },
+      {
+        "tool_name": "Tensor da correia dentada",
+        "quantity": 4
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 3
+      }
+    ],
+    "amount": 1159.5,
+    "duration_service_hours": 4.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 8,
+    "client_id": 4,
+    "vehicle_id": 16,
+    "technical_name": "Henrique Almeida",
+    "technical_disponibility": false,
+    "service_name": "Troca de correia de acessórios",
+    "service_description": "Substituição da correia e inspeção das polias de acessórios.",
+    "tools": [
+      {
+        "tool_name": "Correia de acessórios",
+        "quantity": 6
+      },
+      {
+        "tool_name": "Chave combinada 13 mm",
+        "quantity": 2
+      }
+    ],
+    "amount": 539.4,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 9,
+    "client_id": 35,
+    "vehicle_id": 20,
+    "technical_name": "Isabela Nascimento",
+    "technical_disponibility": false,
+    "service_name": "Troca de bomba de água",
+    "service_description": "Substituição da bomba e verificação do circuito de arrefecimento.",
+    "tools": [
+      {
+        "tool_name": "Bomba de água",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Alicate para abraçadeiras",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 4
+      }
+    ],
+    "amount": 2089.1,
+    "duration_service_hours": 3.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 10,
+    "client_id": 3,
+    "vehicle_id": 50,
+    "technical_name": "João Lima",
+    "technical_disponibility": false,
+    "service_name": "Revisão do arrefecimento",
+    "service_description": "Inspeção do sistema e substituição de componentes com desgaste.",
+    "tools": [
+      {
+        "tool_name": "Válvula termostática",
+        "quantity": 1
+      },
+      {
+        "tool_name": "Mangueira do radiador",
+        "quantity": 6
+      },
+      {
+        "tool_name": "Radiador",
+        "quantity": 7
+      },
+      {
+        "tool_name": "Alicate para abraçadeiras",
+        "quantity": 8
+      }
+    ],
+    "amount": 4008.6,
+    "duration_service_hours": 3.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 11,
+    "client_id": 4,
+    "vehicle_id": 23,
+    "technical_name": "Karina Araújo",
+    "technical_disponibility": false,
+    "service_name": "Troca de embreagem",
+    "service_description": "Remoção da transmissão e substituição do conjunto de embreagem.",
+    "tools": [
+      {
+        "tool_name": "Kit de embreagem",
+        "quantity": 3
+      },
+      {
+        "tool_name": "Macaco hidráulico",
+        "quantity": 7
+      },
+      {
+        "tool_name": "Cavalete automotivo",
+        "quantity": 7
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 8
+      }
+    ],
+    "amount": 2849.7,
+    "duration_service_hours": 6.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 15,
+    "client_id": 3,
+    "vehicle_id": 1,
+    "technical_name": "Olívia Martins",
+    "technical_disponibility": false,
+    "service_name": "Troca de bateria",
+    "service_description": "Substituição da bateria e verificação da tensão de alimentação.",
+    "tools": [
+      {
+        "tool_name": "Bateria automotiva 60 Ah",
+        "quantity": 4
+      },
+      {
+        "tool_name": "Chave combinada 10 mm",
+        "quantity": 10
+      },
+      {
+        "tool_name": "Multímetro digital",
+        "quantity": 10
+      }
+    ],
+    "amount": 2069.6,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 17,
+    "client_id": 32,
+    "vehicle_id": 4,
+    "technical_name": "Quitéria Ribeiro",
+    "technical_disponibility": false,
+    "service_name": "Troca de alternador",
+    "service_description": "Substituição do alternador e teste do sistema de carga.",
+    "tools": [
+      {
+        "tool_name": "Alternador",
+        "quantity": 10
+      },
+      {
+        "tool_name": "Multímetro digital",
+        "quantity": 6
+      },
+      {
+        "tool_name": "Jogo de soquetes",
+        "quantity": 9
+      }
+    ],
+    "amount": 9299.0,
+    "duration_service_hours": 2.5,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 18,
+    "client_id": 32,
+    "vehicle_id": 11,
+    "technical_name": "Rafael Alves",
+    "technical_disponibility": false,
+    "service_name": "Troca de motor de partida",
+    "service_description": "Substituição do motor de partida e teste de funcionamento.",
+    "tools": [
+      {
+        "tool_name": "Motor de partida",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Chave de catraca",
+        "quantity": 1
+      },
+      {
+        "tool_name": "Multímetro digital",
+        "quantity": 2
+      }
+    ],
+    "amount": 1559.8,
+    "duration_service_hours": 2.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 23,
+    "client_id": 49,
+    "vehicle_id": 42,
+    "technical_name": "Wanda Dias",
+    "technical_disponibility": true,
+    "service_name": "Diagnóstico eletrônico",
+    "service_description": "Leitura de falhas e análise de parâmetros eletrônicos do veículo.",
+    "tools": [
+      {
+        "tool_name": "Scanner automotivo",
+        "quantity": 9
+      },
+      {
+        "tool_name": "Multímetro digital",
+        "quantity": 10
+      }
+    ],
+    "amount": 150.0,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 24,
+    "client_id": 35,
+    "vehicle_id": 27,
+    "technical_name": "Xavier Castro",
+    "technical_disponibility": false,
+    "service_name": "Troca de sensor de temperatura",
+    "service_description": "Substituição do sensor e conferência da leitura de temperatura.",
+    "tools": [
+      {
+        "tool_name": "Sensor de temperatura do motor",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Scanner automotivo",
+        "quantity": 1
+      },
+      {
+        "tool_name": "Chave combinada 17 mm",
+        "quantity": 10
+      }
+    ],
+    "amount": 299.8,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 26,
+    "client_id": 33,
+    "vehicle_id": 47,
+    "technical_name": "André Teixeira",
+    "technical_disponibility": true,
+    "service_name": "Troca de cabos de vela",
+    "service_description": "Substituição dos cabos de ignição e teste de funcionamento.",
+    "tools": [
+      {
+        "tool_name": "Cabo de vela",
+        "quantity": 4
+      },
+      {
+        "tool_name": "Alicate universal",
+        "quantity": 5
+      }
+    ],
+    "amount": 589.6,
+    "duration_service_hours": 1.0,
+    "duration_service_days": 1
+  },
+  {
+    "technical_id": 30,
+    "client_id": 4,
+    "vehicle_id": 30,
+    "technical_name": "Eduardo Batista",
+    "technical_disponibility": true,
+    "service_name": "Inspeção de rodas e fixações",
+    "service_description": "Inspeção visual das rodas e verificação de torque dos fixadores.",
+    "tools": [
+      {
+        "tool_name": "Chave de roda",
+        "quantity": 2
+      },
+      {
+        "tool_name": "Torquímetro",
+        "quantity": 5
+      },
+      {
+        "tool_name": "Macaco hidráulico",
+        "quantity": 8
+      }
+    ],
+    "amount": 90.0,
+    "duration_service_hours": 0.5,
+    "duration_service_days": 1
+  }
+]

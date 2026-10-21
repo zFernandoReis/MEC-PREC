@@ -1,0 +1,452 @@
+[
+  {
+    "tool_name": "Chave combinada 10 mm",
+    "quantity": 12,
+    "price": 35.9,
+    "batch": "MEC-2026-001",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Chave para apertar e soltar porcas e parafusos de 10 mm."
+  },
+  {
+    "tool_name": "Chave combinada 13 mm",
+    "quantity": 10,
+    "price": 42.5,
+    "batch": "MEC-2026-002",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Chave para porcas e parafusos de 13 mm."
+  },
+  {
+    "tool_name": "Chave combinada 17 mm",
+    "quantity": 8,
+    "price": 54.9,
+    "batch": "MEC-2026-003",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Chave para porcas e parafusos de 17 mm."
+  },
+  {
+    "tool_name": "Chave de roda",
+    "quantity": 5,
+    "price": 89.9,
+    "batch": "MEC-2026-004",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Ferramenta para remoção e aperto de porcas de rodas."
+  },
+  {
+    "tool_name": "Torquímetro",
+    "quantity": 3,
+    "price": 389.9,
+    "batch": "MEC-2026-005",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Ferramenta para aplicar torque controlado em fixadores."
+  },
+  {
+    "tool_name": "Jogo de soquetes",
+    "quantity": 4,
+    "price": 249.9,
+    "batch": "MEC-2026-006",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Conjunto de soquetes para manutenção automotiva."
+  },
+  {
+    "tool_name": "Chave de catraca",
+    "quantity": 6,
+    "price": 119.9,
+    "batch": "MEC-2026-007",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Catraca de encaixe de meia polegada para uso com soquetes."
+  },
+  {
+    "tool_name": "Chave Allen",
+    "quantity": 7,
+    "price": 69.9,
+    "batch": "MEC-2026-008",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Conjunto de chaves para parafusos com sextavado interno."
+  },
+  {
+    "tool_name": "Chave Torx",
+    "quantity": 6,
+    "price": 89.9,
+    "batch": "MEC-2026-009",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Conjunto de chaves para parafusos com perfil Torx."
+  },
+  {
+    "tool_name": "Chave de fenda",
+    "quantity": 15,
+    "price": 24.9,
+    "batch": "MEC-2026-010",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Ferramenta para parafusos com fenda reta."
+  },
+  {
+    "tool_name": "Chave Phillips",
+    "quantity": 15,
+    "price": 27.9,
+    "batch": "MEC-2026-011",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Ferramenta para parafusos com encaixe em cruz."
+  },
+  {
+    "tool_name": "Alicate universal",
+    "quantity": 8,
+    "price": 49.9,
+    "batch": "MEC-2026-012",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Alicate para segurar peças e cortar fios."
+  },
+  {
+    "tool_name": "Alicate de pressão",
+    "quantity": 6,
+    "price": 79.9,
+    "batch": "MEC-2026-013",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Alicate com trava para fixação de peças."
+  },
+  {
+    "tool_name": "Alicate para abraçadeiras",
+    "quantity": 4,
+    "price": 99.9,
+    "batch": "MEC-2026-014",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Ferramenta para manusear abraçadeiras de mangueiras."
+  },
+  {
+    "tool_name": "Macaco hidráulico",
+    "quantity": 2,
+    "price": 799.9,
+    "batch": "MEC-2026-015",
+    "replacement_time_hours": 1.0,
+    "replacement_time_days": 1,
+    "tool_description": "Equipamento para elevação de veículos durante a manutenção."
+  },
+  {
+    "tool_name": "Cavalete automotivo",
+    "quantity": 8,
+    "price": 159.9,
+    "batch": "MEC-2026-016",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Suporte para sustentação do veículo elevado."
+  },
+  {
+    "tool_name": "Scanner automotivo",
+    "quantity": 2,
+    "price": 1499.9,
+    "batch": "MEC-2026-017",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Equipamento para leitura de falhas e parâmetros eletrônicos."
+  },
+  {
+    "tool_name": "Multímetro digital",
+    "quantity": 4,
+    "price": 129.9,
+    "batch": "MEC-2026-018",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Instrumento para medições elétricas no veículo."
+  },
+  {
+    "tool_name": "Compressor de molas",
+    "quantity": 3,
+    "price": 219.9,
+    "batch": "MEC-2026-019",
+    "replacement_time_hours": 1.0,
+    "replacement_time_days": 1,
+    "tool_description": "Ferramenta para compressão de molas da suspensão."
+  },
+  {
+    "tool_name": "Extrator de rolamento",
+    "quantity": 3,
+    "price": 189.9,
+    "batch": "MEC-2026-020",
+    "replacement_time_hours": 1.0,
+    "replacement_time_days": 1,
+    "tool_description": "Ferramenta para remoção de rolamentos montados sob pressão."
+  },
+  {
+    "tool_name": "Filtro de óleo",
+    "quantity": 40,
+    "price": 34.9,
+    "batch": "MEC-2026-021",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Elemento filtrante para remoção de impurezas do óleo do motor."
+  },
+  {
+    "tool_name": "Filtro de ar do motor",
+    "quantity": 30,
+    "price": 49.9,
+    "batch": "MEC-2026-022",
+    "replacement_time_hours": 0.25,
+    "replacement_time_days": 1,
+    "tool_description": "Elemento filtrante do ar admitido pelo motor."
+  },
+  {
+    "tool_name": "Filtro de combustível",
+    "quantity": 25,
+    "price": 39.9,
+    "batch": "MEC-2026-023",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Filtro para retenção de impurezas do combustível."
+  },
+  {
+    "tool_name": "Filtro de cabine",
+    "quantity": 25,
+    "price": 44.9,
+    "batch": "MEC-2026-024",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Filtro do ar de ventilação do habitáculo."
+  },
+  {
+    "tool_name": "Vela de ignição",
+    "quantity": 60,
+    "price": 29.9,
+    "batch": "MEC-2026-025",
+    "replacement_time_hours": 1.0,
+    "replacement_time_days": 1,
+    "tool_description": "Componente que produz a centelha de ignição."
+  },
+  {
+    "tool_name": "Bobina de ignição",
+    "quantity": 12,
+    "price": 189.9,
+    "batch": "MEC-2026-026",
+    "replacement_time_hours": 1.0,
+    "replacement_time_days": 1,
+    "tool_description": "Componente que fornece alta tensão às velas."
+  },
+  {
+    "tool_name": "Cabo de vela",
+    "quantity": 10,
+    "price": 119.9,
+    "batch": "MEC-2026-027",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Cabo para condução de alta tensão até a vela de ignição."
+  },
+  {
+    "tool_name": "Pastilha de freio dianteira",
+    "quantity": 20,
+    "price": 139.9,
+    "batch": "MEC-2026-028",
+    "replacement_time_hours": 1.5,
+    "replacement_time_days": 1,
+    "tool_description": "Jogo de pastilhas para o sistema de freio dianteiro."
+  },
+  {
+    "tool_name": "Disco de freio dianteiro",
+    "quantity": 16,
+    "price": 219.9,
+    "batch": "MEC-2026-029",
+    "replacement_time_hours": 2.0,
+    "replacement_time_days": 1,
+    "tool_description": "Disco para o conjunto de frenagem dianteiro."
+  },
+  {
+    "tool_name": "Sapata de freio traseira",
+    "quantity": 12,
+    "price": 129.9,
+    "batch": "MEC-2026-030",
+    "replacement_time_hours": 2.0,
+    "replacement_time_days": 1,
+    "tool_description": "Jogo de sapatas para freio traseiro a tambor."
+  },
+  {
+    "tool_name": "Cilindro de roda",
+    "quantity": 16,
+    "price": 69.9,
+    "batch": "MEC-2026-031",
+    "replacement_time_hours": 1.5,
+    "replacement_time_days": 1,
+    "tool_description": "Atuador hidráulico do sistema de freio a tambor."
+  },
+  {
+    "tool_name": "Amortecedor dianteiro",
+    "quantity": 12,
+    "price": 349.9,
+    "batch": "MEC-2026-032",
+    "replacement_time_hours": 2.5,
+    "replacement_time_days": 1,
+    "tool_description": "Componente de controle dos movimentos da suspensão dianteira."
+  },
+  {
+    "tool_name": "Amortecedor traseiro",
+    "quantity": 12,
+    "price": 249.9,
+    "batch": "MEC-2026-033",
+    "replacement_time_hours": 1.5,
+    "replacement_time_days": 1,
+    "tool_description": "Componente de controle dos movimentos da suspensão traseira."
+  },
+  {
+    "tool_name": "Bieleta da suspensão",
+    "quantity": 24,
+    "price": 59.9,
+    "batch": "MEC-2026-034",
+    "replacement_time_hours": 1.0,
+    "replacement_time_days": 1,
+    "tool_description": "Haste de ligação da barra estabilizadora à suspensão."
+  },
+  {
+    "tool_name": "Bucha de bandeja",
+    "quantity": 30,
+    "price": 39.9,
+    "batch": "MEC-2026-035",
+    "replacement_time_hours": 2.0,
+    "replacement_time_days": 1,
+    "tool_description": "Elemento elástico de articulação da bandeja de suspensão."
+  },
+  {
+    "tool_name": "Pivô de suspensão",
+    "quantity": 20,
+    "price": 89.9,
+    "batch": "MEC-2026-036",
+    "replacement_time_hours": 1.5,
+    "replacement_time_days": 1,
+    "tool_description": "Articulação entre a bandeja e o conjunto da roda."
+  },
+  {
+    "tool_name": "Terminal de direção",
+    "quantity": 20,
+    "price": 79.9,
+    "batch": "MEC-2026-037",
+    "replacement_time_hours": 1.5,
+    "replacement_time_days": 1,
+    "tool_description": "Articulação de ligação da direção ao conjunto da roda."
+  },
+  {
+    "tool_name": "Rolamento de roda",
+    "quantity": 18,
+    "price": 149.9,
+    "batch": "MEC-2026-038",
+    "replacement_time_hours": 2.0,
+    "replacement_time_days": 1,
+    "tool_description": "Rolamento para rotação do cubo de roda."
+  },
+  {
+    "tool_name": "Correia dentada",
+    "quantity": 15,
+    "price": 119.9,
+    "batch": "MEC-2026-039",
+    "replacement_time_hours": 4.0,
+    "replacement_time_days": 1,
+    "tool_description": "Correia de sincronismo entre virabrequim e comando de válvulas."
+  },
+  {
+    "tool_name": "Tensor da correia dentada",
+    "quantity": 12,
+    "price": 139.9,
+    "batch": "MEC-2026-040",
+    "replacement_time_hours": 4.0,
+    "replacement_time_days": 1,
+    "tool_description": "Componente de controle da tensão da correia dentada."
+  },
+  {
+    "tool_name": "Correia de acessórios",
+    "quantity": 20,
+    "price": 69.9,
+    "batch": "MEC-2026-041",
+    "replacement_time_hours": 1.0,
+    "replacement_time_days": 1,
+    "tool_description": "Correia de acionamento de acessórios do motor."
+  },
+  {
+    "tool_name": "Bomba de água",
+    "quantity": 10,
+    "price": 189.9,
+    "batch": "MEC-2026-042",
+    "replacement_time_hours": 3.0,
+    "replacement_time_days": 1,
+    "tool_description": "Bomba de circulação do líquido de arrefecimento."
+  },
+  {
+    "tool_name": "Válvula termostática",
+    "quantity": 15,
+    "price": 89.9,
+    "batch": "MEC-2026-043",
+    "replacement_time_hours": 1.5,
+    "replacement_time_days": 1,
+    "tool_description": "Válvula de controle da circulação do líquido de arrefecimento."
+  },
+  {
+    "tool_name": "Radiador",
+    "quantity": 6,
+    "price": 459.9,
+    "batch": "MEC-2026-044",
+    "replacement_time_hours": 3.0,
+    "replacement_time_days": 1,
+    "tool_description": "Trocador de calor do sistema de arrefecimento."
+  },
+  {
+    "tool_name": "Mangueira do radiador",
+    "quantity": 18,
+    "price": 59.9,
+    "batch": "MEC-2026-045",
+    "replacement_time_hours": 1.0,
+    "replacement_time_days": 1,
+    "tool_description": "Mangueira para circulação do líquido de arrefecimento."
+  },
+  {
+    "tool_name": "Kit de embreagem",
+    "quantity": 8,
+    "price": 699.9,
+    "batch": "MEC-2026-046",
+    "replacement_time_hours": 6.0,
+    "replacement_time_days": 1,
+    "tool_description": "Conjunto de disco, platô e rolamento de embreagem."
+  },
+  {
+    "tool_name": "Bateria automotiva 60 Ah",
+    "quantity": 10,
+    "price": 499.9,
+    "batch": "MEC-2026-047",
+    "replacement_time_hours": 0.5,
+    "replacement_time_days": 1,
+    "tool_description": "Bateria de alimentação elétrica e partida do veículo."
+  },
+  {
+    "tool_name": "Alternador",
+    "quantity": 4,
+    "price": 899.9,
+    "batch": "MEC-2026-048",
+    "replacement_time_hours": 2.5,
+    "replacement_time_days": 1,
+    "tool_description": "Gerador de energia elétrica e carga da bateria."
+  },
+  {
+    "tool_name": "Motor de partida",
+    "quantity": 4,
+    "price": 649.9,
+    "batch": "MEC-2026-049",
+    "replacement_time_hours": 2.0,
+    "replacement_time_days": 1,
+    "tool_description": "Motor elétrico responsável por iniciar o funcionamento do motor."
+  },
+  {
+    "tool_name": "Sensor de temperatura do motor",
+    "quantity": 15,
+    "price": 79.9,
+    "batch": "MEC-2026-050",
+    "replacement_time_hours": 1.0,
+    "replacement_time_days": 1,
+    "tool_description": "Sensor de monitoramento da temperatura do motor."
+  }
+]
