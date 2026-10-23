@@ -6,6 +6,8 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 
 from app.config import settings
+from app.modules.orders.application.ports.order_repository import OrderRepository
+from app.modules.orders.infrastructure.http.router_orders import router as orders_router
 from app.modules.quotes.application.ports.budget_repository import BudgetRepository
 from app.modules.quotes.application.ports.stock_repository import StockRepository
 from app.modules.quotes.infrastructure.http.router_budgets import (
@@ -21,11 +23,11 @@ from app.modules.users.infrastructure.http.router_users import router as users_r
 from app.modules.users.infrastructure.http.router_vehicles import (
     router as vehicles_router,
 )
-from app.shared.infrastructure.logging import configure_logging, logger
 from app.shared.infrastructure.database.integrity_errors import integrity_error_details
+from app.shared.infrastructure.logging import configure_logging, logger
 
 
-def create_app(user_repository: UserRepository | None = None, budget_repository: BudgetRepository | None = None, stock_repository: StockRepository | None = None, vehicle_repository: VehicleRepository | None = None) -> FastAPI:
+def create_app(user_repository: UserRepository | None = None, budget_repository: BudgetRepository | None = None, stock_repository: StockRepository | None = None, vehicle_repository: VehicleRepository | None = None, order_repository: OrderRepository | None = None) -> FastAPI:
     configure_logging(settings.LOG_LEVEL)
     logger.debug("Configurando aplicação e registrando rotas HTTP.")
 
@@ -48,10 +50,12 @@ def create_app(user_repository: UserRepository | None = None, budget_repository:
     application.state.budget_repository = budget_repository
     application.state.stock_repository = stock_repository
     application.state.vehicle_repository = vehicle_repository
+    application.state.order_repository = order_repository
     application.include_router(users_router)
     application.include_router(budgets_router)
     application.include_router(stocks_router)
     application.include_router(vehicles_router)
+    application.include_router(orders_router)
 
     @application.exception_handler(IntegrityError)
     async def integrity_error(request: Request, exc: IntegrityError):

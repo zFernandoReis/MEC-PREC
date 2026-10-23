@@ -38,7 +38,7 @@ async def test_create_budget_preserves_vehicle_id():
         duration_service_hours=1, duration_service_days=1,
     )
     repository = AsyncMock()
-    budget = await CreateBudgetUseCase(repository).execute(dto)
+    budget = await CreateBudgetUseCase(repository, AsyncMock()).execute(dto)
     repository.save.assert_awaited_once_with(budget)
     assert budget.vehicle_id == 7
     model = BudgetModel.from_entity(budget)

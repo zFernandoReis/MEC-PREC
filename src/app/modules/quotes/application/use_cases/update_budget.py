@@ -1,4 +1,3 @@
-from dataclasses import replace
 
 from app.modules.quotes.application.dtos.budget_dto import UpdateBudgetDTO
 from app.modules.quotes.application.ports.budget_repository import BudgetRepository
@@ -23,8 +22,9 @@ class UpdateBudgetUseCase:
             logger.debug("Orçamento não encontrado para atualização: budget_id=%s", budget_id)
             raise BudgetNotFoundError()
         
+        values = dto.model_dump()
         for field in ("technical_name", "technical_disponibility", "service_name", "service_description", "tools", "amount", "duration_service_hours", "duration_service_days"):
-            value = getattr(dto, field)
+            value = values[field]
             if value is not None:
                 setattr(budget, field, value)
 

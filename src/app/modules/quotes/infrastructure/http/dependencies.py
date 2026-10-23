@@ -36,13 +36,6 @@ async def get_budget_repository(request: Request) -> AsyncGenerator[BudgetReposi
             raise
 
 
-def get_budgets_use_cases(
-    request: Request,
-    repository: Annotated[BudgetRepository, Depends(get_budget_repository)],
-) -> BudgetsUseCases:
-    return build_budgets_use_cases(repository)
-
-
 async def get_stock_repository(request: Request) -> AsyncGenerator[StockRepository, None]:
     repository = request.app.state.stock_repository
     if repository is not None:
@@ -59,6 +52,14 @@ async def get_stock_repository(request: Request) -> AsyncGenerator[StockReposito
             logger.debug("Revertendo transação após falha no processamento da requisição.")
             await session.rollback()
             raise
+
+def get_budgets_use_cases(
+    request: Request,
+    repository: Annotated[BudgetRepository, Depends(get_budget_repository)],
+    stock_repository: Annotated[StockRepository, Depends(get_stock_repository)],
+) -> BudgetsUseCases:
+    return build_budgets_use_cases(repository, stock_repository)
+
 
 def get_stock_use_cases(
     request: Request,

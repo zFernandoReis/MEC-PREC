@@ -28,6 +28,14 @@ class SQLAlchemyStockRepository:
         logger.debug("Consulta de item de estoque concluída: encontrado=%s", model is not None)
         return model.to_entity() if model is not None else None
 
+    async def get_by_ids(self, tool_ids: list[str]) -> list[Stock]:
+        if not tool_ids:
+            return []
+        result = await self.session.scalars(
+            select(StockModel).where(StockModel.tool_id.in_(tool_ids))
+        )
+        return [model.to_entity() for model in result]
+
     async def list(self, *, offset: int, limit: int) -> list[Stock]:
         logger.debug("Consultando página de item de estoque no banco: offset=%s, limit=%s", offset, limit)
         result = await self.session.scalars(
