@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, Enum, Identity, Integer, String, Uuid, func
+from sqlalchemy import DateTime, Enum, Identity, Integer, String, Uuid, func, text
 from sqlalchemy.orm import Mapped, composite, mapped_column, relationship
 
 from app.modules.quotes.infrastructure.models.budgets_model import BudgetModel
@@ -13,7 +13,7 @@ from app.shared.infrastructure.database.base import Base
 
 
 class UserModel(Base):
-    """Persistência de User na tabela cliente, reutilizando Address e UserRole."""
+    """Persistência de User na tabela users, incluindo apenas o hash da senha."""
 
     __tablename__ = "users"
 
@@ -39,6 +39,11 @@ class UserModel(Base):
     secondary_name: Mapped[str] = mapped_column(String(100), nullable=False)
     cpf: Mapped[str] = mapped_column(String(11), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String(254), nullable=False)
+    # Registros legados sem senha ficam impedidos de fazer login até a definição.
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    token_version: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default=text("0"),
+    )
     role: Mapped[UserRole] = mapped_column(
         Enum(
             UserRole,
@@ -73,6 +78,8 @@ class UserModel(Base):
             email=user.email,
             role=user.role,
             address=user.adress,
+            password_hash=user.password_hash,
+            token_version=user.token_version,
         )
 
     def to_entity(self) -> User:
@@ -87,4 +94,6 @@ class UserModel(Base):
             email=self.email,
             role=self.role,
             adress=self.address,
+            password_hash=self.password_hash,
+            token_version=self.token_version,
         )

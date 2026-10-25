@@ -7,7 +7,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
-from app.main import create_app
 from app.modules.quotes.application.dtos.budget_dto import BudgetToolDTO, CreateBudgetDTO
 from app.modules.quotes.application.use_cases.create_budget import CreateBudgetUseCase
 from app.modules.quotes.domain.entities.stock import Stock
@@ -89,10 +88,10 @@ async def test_budget_without_tools_skips_stock_query(payload, tools):
     assert budget.tools == tools
 
 
-def test_create_budget_http_adds_replacement_for_insufficient_stock(payload):
+def test_create_budget_http_adds_replacement_for_insufficient_stock(payload, authenticated_app):
     budgets, stock = AsyncMock(), AsyncMock()
     stock.get_by_ids.return_value = [stock_item(0)]
-    with TestClient(create_app(budget_repository=budgets, stock_repository=stock)) as client:
+    with TestClient(authenticated_app(budget_repository=budgets, stock_repository=stock)) as client:
         response = client.post("/budgets", json=payload)
     assert response.status_code == 201, response.text
     assert response.json()["duration_service_hours"] == 2

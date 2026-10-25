@@ -2,6 +2,8 @@ from app.modules.users.application.dtos.user_dto import CreateUserDTO
 from app.modules.users.application.services.address_service import AddressService
 from app.modules.users.domain.entities.user import User
 from app.shared.infrastructure.logging import logger
+from app.shared.infrastructure.security.passwords import hash_password
+from starlette.concurrency import run_in_threadpool
 
 
 class CreateUserUseCase:
@@ -31,6 +33,7 @@ class CreateUserUseCase:
             email=dto.email,
             role=dto.role,
             adress=address,
+            password_hash=await run_in_threadpool(hash_password, dto.password.get_secret_value()),
         )
 
         logger.debug("Persistindo novo usuário com endereço resolvido.")

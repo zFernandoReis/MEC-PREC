@@ -17,6 +17,7 @@ def test_create_stock_payload_persists_and_restores_required_fields():
         tool_description="parafuso para m6",
     )
     stock = Stock(
+        tool_id="TEST-STOCK-1",
         **dto.model_dump(exclude={"tool_description"}),
         description=dto.tool_description,
     )

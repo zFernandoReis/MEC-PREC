@@ -18,6 +18,8 @@ class User:
     system_id: UUID = field(default_factory=uuid4)
     create_at: datetime | None = None
     update_at: datetime | None = None
+    password_hash: str | None = field(default=None, repr=False)
+    token_version: int = field(default=0, repr=False)
 
     def __post_init__(self):
         self.validate_email(self.email)

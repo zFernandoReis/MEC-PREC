@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from app.modules.users.domain.enums.user_role import UserRole
+from app.shared.infrastructure.security.schemas import NewPassword
 
 
 class AddressInputDTO(BaseModel):
@@ -19,6 +20,7 @@ class CreateUserDTO(BaseModel):
     email: EmailStr
     role: UserRole
     address: AddressInputDTO
+    password: NewPassword
 
 
 class UpdateAddressDTO(BaseModel):

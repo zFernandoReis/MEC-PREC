@@ -1,8 +1,10 @@
 from contextlib import asynccontextmanager
 
 import httpx
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
 from sqlalchemy.exc import IntegrityError
 
 from app.config import settings
@@ -25,9 +27,12 @@ from app.modules.users.infrastructure.http.router_vehicles import (
 )
 from app.shared.infrastructure.database.integrity_errors import integrity_error_details
 from app.shared.infrastructure.logging import configure_logging, logger
+from app.shared.infrastructure.security.dependencies import get_current_user, require_admin
+from app.shared.infrastructure.security.repository import CredentialRepository
+from app.shared.infrastructure.security.router import router as auth_router
 
 
-def create_app(user_repository: UserRepository | None = None, budget_repository: BudgetRepository | None = None, stock_repository: StockRepository | None = None, vehicle_repository: VehicleRepository | None = None, order_repository: OrderRepository | None = None) -> FastAPI:
+def create_app(user_repository: UserRepository | None = None, budget_repository: BudgetRepository | None = None, stock_repository: StockRepository | None = None, vehicle_repository: VehicleRepository | None = None, order_repository: OrderRepository | None = None, credential_repository: CredentialRepository | None = None) -> FastAPI:
     configure_logging(settings.LOG_LEVEL)
     logger.debug("Configurando aplicação e registrando rotas HTTP.")
 
@@ -51,11 +56,25 @@ def create_app(user_repository: UserRepository | None = None, budget_repository:
     application.state.stock_repository = stock_repository
     application.state.vehicle_repository = vehicle_repository
     application.state.order_repository = order_repository
-    application.include_router(users_router)
-    application.include_router(budgets_router)
-    application.include_router(stocks_router)
-    application.include_router(vehicles_router)
-    application.include_router(orders_router)
+    application.state.credential_repository = credential_repository
+    application.include_router(auth_router)
+    application.include_router(users_router, dependencies=[Depends(require_admin)])
+    authenticated = [Depends(get_current_user)]
+    application.include_router(budgets_router, dependencies=authenticated)
+    application.include_router(stocks_router, dependencies=authenticated)
+    application.include_router(vehicles_router, dependencies=authenticated)
+    application.include_router(orders_router, dependencies=authenticated)
+
+    @application.exception_handler(RequestValidationError)
+    async def validation_error(request: Request, exc: RequestValidationError):
+        if request.url.path.startswith(("/auth/", "/users")):
+            # A resposta padrão inclui input, que pode conter senhas e tokens.
+            errors = [
+                {key: error[key] for key in ("loc", "msg", "type")}
+                for error in exc.errors()
+            ]
+            return JSONResponse(status_code=422, content={"detail": errors})
+        return await request_validation_exception_handler(request, exc)
 
     @application.exception_handler(IntegrityError)
     async def integrity_error(request: Request, exc: IntegrityError):

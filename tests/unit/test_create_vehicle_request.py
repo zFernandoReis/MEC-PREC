@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
-from app.main import create_app
 from app.modules.quotes.infrastructure.models.budgets_model import BudgetModel
 from app.modules.users.domain.enums.user_role import UserRole
 from app.modules.users.infrastructure.models.users_model import UserModel
@@ -16,7 +15,7 @@ from app.modules.users.infrastructure.repositories.sqlalchemy_vehicle_repository
 )
 
 
-def test_create_vehicle_with_supplied_request():
+def test_create_vehicle_with_supplied_request(authenticated_app):
     payload = {
         "owner_id": 1,
         "vehicle_type": "car",
@@ -68,7 +67,7 @@ def test_create_vehicle_with_supplied_request():
             async_session.delete.side_effect = session.delete
             repository = SQLAlchemyVehicleRepository(async_session)
 
-            with TestClient(create_app(vehicle_repository=repository)) as client:
+            with TestClient(authenticated_app(vehicle_repository=repository)) as client:
                 response = client.post("/vehicles", json=payload)
                 assert response.status_code == 201, response.text
                 body = response.json()

@@ -6,9 +6,6 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-from app.main import create_app
-
-
 class FakeUserRepository:
     def __init__(self):
         self.users = {}
@@ -33,8 +30,8 @@ class FakeUserRepository:
 
 
 @pytest.fixture
-def client():
-    application = create_app(FakeUserRepository())
+def client(authenticated_app):
+    application = authenticated_app(FakeUserRepository())
     with TestClient(application) as test_client:
         async def lookup(request):
             return httpx.Response(200, json={
@@ -53,6 +50,7 @@ def payload():
         "primary_name": "Fernando", "secondary_name": "Silva",
         "cpf": "52998224725", "email": "fernando@example.com", "role": "client",
         "address": {"cep": "01001000", "number": "10", "complement": "Sala 1"},
+        "password": "a-secure-password-123",
     }
 
 
@@ -127,16 +125,16 @@ def test_system_fields_cannot_be_supplied(client, field, value):
     assert client.patch(f'/users/{created["id"]}', json={field: value}).status_code == 422
 
 
-def test_default_repository_uses_database_session(monkeypatch):
+def test_default_repository_uses_database_session(monkeypatch, authenticated_app):
     from unittest.mock import AsyncMock
-    from app.shared.infrastructure.database import engine as database
+    from app.modules.users.infrastructure.http import dependencies
 
     session = AsyncMock()
     session.scalars.return_value = []
     context = AsyncMock()
     context.__aenter__.return_value = session
-    monkeypatch.setattr(database, "AsyncSessionLocal", lambda: context)
-    with TestClient(create_app()) as client:
+    monkeypatch.setattr(dependencies, "AsyncSessionLocal", lambda: context)
+    with TestClient(authenticated_app()) as client:
         response = client.get("/users")
         assert response.status_code == 200
         assert response.json() == []

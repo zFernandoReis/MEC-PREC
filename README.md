@@ -1,13 +1,110 @@
 # MEC System
 
+## Autenticação JWT
+
+A implementação fica em `src/app/shared/infrastructure/security`, integrada ao
+usuário existente em `modules/users`. O login usa **CPF com 11 dígitos e senha**,
+pois o CPF já é único e o e-mail atualmente permite duplicidade. Nenhum usuário
+é criado pelo login. O cadastro em `POST /users` exige `password` (12 a 128
+caracteres) e calcula o hash Argon2id antes de salvar em `users.password_hash`.
+O modelo `User` contém apenas o hash, omitido no repr e nos DTOs de resposta.
+`users.token_version` permite revogar as sessões. Não há tabela separada de senhas.
+
+### Preparação
+
+1. Execute `uv sync` e configure as variáveis de banco no `.env` (veja `.env.example`).
+2. Gere um segredo com `uv run python -c "import secrets; print(secrets.token_urlsafe(48))"`
+   e salve o resultado em `JWT_SECRET_KEY` no `.env`. Use o mesmo segredo em todas
+   as instâncias; são exigidos pelo menos 32 caracteres. Sem configuração, a
+   emissão/validação de tokens retorna 503, sem usar uma chave padrão.
+3. Execute `uv run --env-file .env python -m app.bootstrap.create_tables`.
+   Para banco **já existente**, pare a API e execute também:
+
+   ```powershell
+   uv run --env-file .env python -m app.bootstrap.migrate_user_passwords
+   ```
+
+   Essa migração adiciona `password_hash` e `token_version` à tabela `users`.
+   Caso exista a antiga `user_credentials`, transfere os hashes e versões antes
+   de removê-la. Preserva hashes já definidos em `users` e pode ser repetida.
+   Registros legados sem senha continuam com hash nulo e não podem fazer login.
+   `create_tables` sozinho não altera colunas de uma tabela já existente.
+4. Para usuários antigos sem senha, ou para redefinição administrativa:
+
+   ```powershell
+   uv run --env-file .env python -m app.shared.infrastructure.security.set_password --cpf 52998224725
+   ```
+
+   O comando solicita a senha e a confirmação sem exibi-las nem recebê-las em
+   argumentos. Exige de 12 a 128 caracteres e também permite redefinição
+   administrativa, revogando as sessões anteriores. Ele não altera o papel do
+   usuário. Para administrar usuários pela API, use uma conta já cadastrada
+   com `role=admin`. Não há cadastro público nem redefinição pública por CPF.
+5. Inicie a API com `uv run uvicorn app.main:app --app-dir src --reload`.
+
+### Rotas
+
+| Método | Rota | Corpo JSON / comportamento |
+| --- | --- | --- |
+| POST | `/auth/login` | `{"cpf":"52998224725","password":"sua-senha-segura"}`; retorna access e refresh token |
+| POST | `/auth/refresh` | `{"refresh_token":"..."}`; consome o refresh e emite um novo par |
+| GET | `/auth/me` | Retorna o usuário do access token atual |
+| POST | `/auth/change-password` | `{"current_password":"...","new_password":"..."}`; exige access token e senha atual; retorna 204 |
+| POST | `/auth/logout` | Exige access token; revoga a sessão e retorna 204 |
+
+Envie `Authorization: Bearer <access_token>` nas rotas protegidas. No Swagger,
+use **Authorize** e cole o access token retornado pelo login.
+Todas as rotas de usuários exigem administrador, inclusive criação e mudança
+de papel. As rotas de veículos, estoque, orçamentos e ordens exigem usuário
+autenticado; não foi adicionada restrição por proprietário nesses recursos.
+
+Exemplo no PowerShell (a senha fica oculta durante a digitação):
+
+```powershell
+$credential = Get-Credential -UserName "52998224725" -Message "Login MEC: CPF e senha"
+$body = @{ cpf = $credential.UserName; password = $credential.GetNetworkCredential().Password } | ConvertTo-Json
+$tokens = Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/auth/login -ContentType application/json -Body $body
+$headers = @{ Authorization = "Bearer $($tokens.access_token)" }
+Invoke-RestMethod -Uri http://127.0.0.1:8000/auth/me -Headers $headers
+```
+
+O access token expira em 15 minutos e o refresh em 7 dias, configuráveis com
+`JWT_ACCESS_TOKEN_MINUTES` (1–60) e `JWT_REFRESH_TOKEN_DAYS` (1–30).
+Os tokens usam HS256, issuer (`JWT_ISSUER`), audience (`JWT_AUDIENCE`), subject,
+expiração, tipo, identificador aleatório e versão de sessão. A validação
+consulta o usuário e a credencial persistidos, permitindo revogação imediata.
+Access e refresh não são intercambiáveis.
+
+Há **uma sessão ativa por usuário**: novo login e refresh invalidam o par
+anterior; o refresh só pode ser consumido uma vez, inclusive em concorrência.
+Logout e mudança/redefinição de senha invalidam todos os tokens anteriores.
+Após mudar a senha, faça login novamente. Credenciais incorretas e tokens
+inválidos retornam 401; falta de permissão retorna 403; entrada inválida retorna
+422. Respostas de validação de autenticação não repetem senhas/tokens recebidos.
+Use HTTPS fora do ambiente local. A API não implementa entrega de e-mails de
+recuperação nem limitação de tentativas; configure esta última no gateway de
+produção. Referência das bibliotecas:
+[FastAPI: JWT e Argon2](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/).
+
+Execute `uv run pytest tests/unit/test_security.py -q` para validar o fluxo com
+os repositórios reais em SQLite isolado, sem consultar o PostgreSQL configurado.
+
 ## Ingestão dos arquivos JSON pela API
 
 Com a API em execução, importe os arquivos de `dados/`:
 
 ```powershell
 uv run python -m app.bootstrap.ingest_json --dry-run
+$env:MEC_ACCESS_TOKEN = $tokens.access_token # obtido no login de um administrador
 uv run python -m app.bootstrap.ingest_json --base-url http://127.0.0.1:8000
 ```
+
+Os usuários importados também precisam de `password`. Para os arquivos de
+amostra, que não contêm senhas, defina `MEC_INITIAL_PASSWORD` com uma senha de
+12 a 128 caracteres antes da validação/importação. Ela será aplicada apenas a
+registros sem o campo `password`; senhas explícitas são preservadas. Use esse
+recurso para amostras locais. A senha é enviada no corpo HTTP e transformada
+em hash pela API; não é impressa nos logs nem gravada nos JSONs pelo script.
 
 O script valida todos os arquivos selecionados antes do primeiro envio e faz
 um POST por registro: `users.json` → `/users`, `stock.json` → `/stock`,
@@ -132,6 +229,7 @@ Exemplo de criação:
   "secondary_name": "Silva",
   "cpf": "52998224725",
   "email": "fernando@example.com",
+  "password": "uma-senha-segura-123",
   "role": "client",
   "address": {"cep": "01001000", "number": "10", "complement": "Sala 1"}
 }

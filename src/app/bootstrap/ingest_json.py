@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -28,7 +29,7 @@ class IngestionError(Exception):
     """Falha de entrada ou de comunicação; a ingestão deve parar."""
 
 
-def load_records(data_dir: Path, resources: list[str]) -> dict[str, list[dict]]:
+def load_records(data_dir: Path, resources: list[str], *, user_password: str | None = None) -> dict[str, list[dict]]:
     """Valida todos os arquivos selecionados antes de permitir qualquer POST."""
     records = {}
     errors = []
@@ -47,7 +48,13 @@ def load_records(data_dir: Path, resources: list[str]) -> dict[str, list[dict]]:
         records[resource] = []
         for index, item in enumerate(data, start=1):
             try:
-                payload = schema.model_validate(item).model_dump(mode="json")
+                if resource == "users" and isinstance(item, dict) and user_password:
+                    item = {"password": user_password, **item}
+                validated = schema.model_validate(item)
+                payload = validated.model_dump(mode="json")
+                if isinstance(validated, CreateUserDTO):
+                    # SecretStr protege logs/repr; envie a senha real somente no corpo HTTP.
+                    payload["password"] = validated.password.get_secret_value()
             except ValidationError as exc:
                 # Não exibe valores de entrada que possam conter dados pessoais.
                 for error in exc.errors(include_input=False, include_url=False):
@@ -151,11 +158,19 @@ def main(argv: list[str] | None = None) -> int:
     if args.timeout <= 0:
         parser.error("--timeout deve ser positivo.")
     try:
-        records = load_records(args.data_dir, args.resources)
+        records = load_records(
+            args.data_dir, args.resources, user_password=os.environ.get("MEC_INITIAL_PASSWORD"),
+        )
         if args.dry_run:
             print(f"Validação concluída: {sum(map(len, records.values()))} registros. Nenhum POST enviado.")
             return 0
-        with httpx.Client(base_url=args.base_url.rstrip("/") + "/", timeout=args.timeout) as client:
+        token = os.environ.get("MEC_ACCESS_TOKEN")
+        if not token:
+            raise IngestionError("Defina MEC_ACCESS_TOKEN com um access token de administrador antes de importar.")
+        with httpx.Client(
+            base_url=args.base_url.rstrip("/") + "/", timeout=args.timeout,
+            headers={"Authorization": f"Bearer {token}"},
+        ) as client:
             created = ingest(client, records)
         print(f"Ingestão concluída: {created} registros criados pela API.")
         return 0

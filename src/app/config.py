@@ -1,5 +1,6 @@
 from typing import Literal
 
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +11,11 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str = "127.0.0.1"
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str
+    JWT_SECRET_KEY: SecretStr | None = Field(default=None, min_length=32)
+    JWT_ISSUER: str = "mec-system"
+    JWT_AUDIENCE: str = "mec-system-api"
+    JWT_ACCESS_TOKEN_MINUTES: int = Field(default=15, ge=1, le=60)
+    JWT_REFRESH_TOKEN_DAYS: int = Field(default=7, ge=1, le=30)
 
 
     @staticmethod

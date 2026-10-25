@@ -28,6 +28,10 @@ class SQLAlchemyUserRepository:
         logger.debug("Consulta de usuário concluída: encontrado=%s", model is not None)
         return model.to_entity() if model is not None else None
 
+    async def get_by_cpf(self, cpf: str) -> User | None:
+        model = await self.session.scalar(select(UserModel).where(UserModel.cpf == cpf))
+        return model.to_entity() if model is not None else None
+
     async def list(self, *, offset: int, limit: int) -> list[User]:
         logger.debug("Consultando página de usuário no banco: offset=%s, limit=%s", offset, limit)
         result = await self.session.scalars(

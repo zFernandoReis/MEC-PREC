@@ -66,3 +66,23 @@ def test_dry_run_does_not_create_http_client(tmp_path, monkeypatch):
 def test_invalid_json_returns_failure(tmp_path):
     (tmp_path / "stock.json").write_text("{", encoding="utf-8")
     assert main(["--data-dir", str(tmp_path), "--resources", "stock", "--dry-run"]) == 1
+
+
+def test_import_preserves_password_instead_of_secretstr_mask(tmp_path):
+    from test_users_router import payload
+
+    data = payload()
+    (tmp_path / "users.json").write_text(json.dumps([data]), encoding="utf-8")
+    records = load_records(tmp_path, ["users"])
+    assert records["users"][0]["password"] == data["password"]
+
+
+def test_initial_password_only_applies_to_users_without_password(tmp_path):
+    from test_users_router import payload
+
+    explicit = payload()
+    without_password = {key: value for key, value in explicit.items() if key != "password"}
+    (tmp_path / "users.json").write_text(json.dumps([explicit, without_password]), encoding="utf-8")
+    records = load_records(tmp_path, ["users"], user_password="initial-password-123")
+    assert records["users"][0]["password"] == explicit["password"]
+    assert records["users"][1]["password"] == "initial-password-123"

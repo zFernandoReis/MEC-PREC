@@ -4,6 +4,7 @@
     "secondary_name": "Silva",
     "cpf": "00000000191",
     "email": "usuario01@example.com",
+    "password": "KIRL01a39joiR/eV43QifMtN",
     "role": "technical",
     "address": {
       "cep": "01001000",
@@ -16,6 +17,7 @@
     "secondary_name": "Santos",
     "cpf": "00000000272",
     "email": "usuario02@example.com",
+    "password": "Jz24gnEnjByopmsXEDmPzf5k",
     "role": "manager",
     "address": {
       "cep": "01310100",
@@ -28,6 +30,7 @@
     "secondary_name": "Oliveira",
     "cpf": "00000000353",
     "email": "usuario03@example.com",
+    "password": "oYZkpmjJ1LLVu32GEXETXx5g",
     "role": "client",
     "address": {
       "cep": "20040020",
@@ -40,6 +43,7 @@
     "secondary_name": "Souza",
     "cpf": "00000000434",
     "email": "usuario04@example.com",
+    "password": "BVBzQ3z3yOdDmiYkA+4E0+AO",
     "role": "client",
     "address": {
       "cep": "30140071",
@@ -52,6 +56,7 @@
     "secondary_name": "Pereira",
     "cpf": "00000000515",
     "email": "usuario05@example.com",
+    "password": "mXk9agGx+FITT6WWXwSQciwb",
     "role": "manager",
     "address": {
       "cep": "80010000",
@@ -64,6 +69,7 @@
     "secondary_name": "Costa",
     "cpf": "00000000604",
     "email": "usuario06@example.com",
+    "password": "A+8LfElmG3WhV7TmCUlJ+rpl",
     "role": "technical",
     "address": {
       "cep": "90010000",
@@ -76,6 +82,7 @@
     "secondary_name": "Rodrigues",
     "cpf": "00000000787",
     "email": "usuario07@example.com",
+    "password": "xyglUR2FFNxet3GvUnjgTWJV",
     "role": "technical",
     "address": {
       "cep": "88010000",
@@ -88,6 +95,7 @@
     "secondary_name": "Almeida",
     "cpf": "00000000868",
     "email": "usuario08@example.com",
+    "password": "D+MuCEXKA4iKJS7BbUia9riA",
     "role": "technical",
     "address": {
       "cep": "74003010",
@@ -100,6 +108,7 @@
     "secondary_name": "Nascimento",
     "cpf": "00000000949",
     "email": "usuario09@example.com",
+    "password": "dPKKm60CKIn4FJqHIKV/1sC4",
     "role": "technical",
     "address": {
       "cep": "50030000",
@@ -112,6 +121,7 @@
     "secondary_name": "Lima",
     "cpf": "00000001082",
     "email": "usuario10@example.com",
+    "password": "uS8BzGokQy6ObTJGSfPDSTKu",
     "role": "technical",
     "address": {
       "cep": "60060000",
@@ -124,6 +134,7 @@
     "secondary_name": "Araújo",
     "cpf": "00000001163",
     "email": "usuario11@example.com",
+    "password": "Nyk8pL1y2I/NPdXug64Air5p",
     "role": "technical",
     "address": {
       "cep": "65010000",
@@ -136,6 +147,7 @@
     "secondary_name": "Fernandes",
     "cpf": "00000001244",
     "email": "usuario12@example.com",
+    "password": "uU4u41N/p1/lTN/oVFbfZnxW",
     "role": "client",
     "address": {
       "cep": "64000040",
@@ -148,6 +160,7 @@
     "secondary_name": "Carvalho",
     "cpf": "00000001325",
     "email": "usuario13@example.com",
+    "password": "L1f1WYkOpGc3CA9LvlveW14k",
     "role": "admin",
     "address": {
       "cep": "66010000",
@@ -160,6 +173,7 @@
     "secondary_name": "Gomes",
     "cpf": "00000001406",
     "email": "usuario14@example.com",
+    "password": "mcWnYzKtmb5+XffAIrC97D4C",
     "role": "manager",
     "address": {
       "cep": "69005070",
@@ -172,6 +186,7 @@
     "secondary_name": "Martins",
     "cpf": "00000001597",
     "email": "usuario15@example.com",
+    "password": "YuutnrKIifGigdWoZK5Nidlw",
     "role": "technical",
     "address": {
       "cep": "77001002",
@@ -184,6 +199,7 @@
     "secondary_name": "Rocha",
     "cpf": "00000001678",
     "email": "usuario16@example.com",
+    "password": "Erjo6k2hgwlcnIiY+wWS8D0o",
     "role": "financial",
     "address": {
       "cep": "79002000",
@@ -196,6 +212,7 @@
     "secondary_name": "Ribeiro",
     "cpf": "00000001759",
     "email": "usuario17@example.com",
+    "password": "G3qh3n6xQ76W+1RPYystrCYy",
     "role": "technical",
     "address": {
       "cep": "78005000",
@@ -208,6 +225,7 @@
     "secondary_name": "Alves",
     "cpf": "00000001830",
     "email": "usuario18@example.com",
+    "password": "OQASy2x7y9g/ZX37GD1TYuAp",
     "role": "technical",
     "address": {
       "cep": "57020000",
@@ -220,6 +238,7 @@
     "secondary_name": "Monteiro",
     "cpf": "00000001910",
     "email": "usuario19@example.com",
+    "password": "Jd0wfeOqkhsKH6QUbYSNGTNw",
     "role": "financial",
     "address": {
       "cep": "59025000",
@@ -232,6 +251,7 @@
     "secondary_name": "Mendes",
     "cpf": "00000002054",
     "email": "usuario20@example.com",
+    "password": "eYWzMMIJsyuT9Tbrax682oYq",
     "role": "manager",
     "address": {
       "cep": "58010000",
@@ -244,6 +264,7 @@
     "secondary_name": "Barbosa",
     "cpf": "00000002135",
     "email": "usuario21@example.com",
+    "password": "obykkkqiwb3n6XypIYT/xex2",
     "role": "financial",
     "address": {
       "cep": "49010000",
@@ -256,6 +277,7 @@
     "secondary_name": "Freitas",
     "cpf": "00000002216",
     "email": "usuario22@example.com",
+    "password": "ARYgEltVRU8+mFnJAH+o3bvD",
     "role": "financial",
     "address": {
       "cep": "29010001",
@@ -268,6 +290,7 @@
     "secondary_name": "Dias",
     "cpf": "00000002305",
     "email": "usuario23@example.com",
+    "password": "ODKG5sRLV/RCB69arPrXOpo1",
     "role": "technical",
     "address": {
       "cep": "68900073",
@@ -280,6 +303,7 @@
     "secondary_name": "Castro",
     "cpf": "00000002488",
     "email": "usuario24@example.com",
+    "password": "BrqSYLK4Vfitw+aywhaopvil",
     "role": "technical",
     "address": {
       "cep": "69900060",
@@ -292,6 +316,7 @@
     "secondary_name": "Cardoso",
     "cpf": "00000002569",
     "email": "usuario25@example.com",
+    "password": "AwNCTEioXoxV2/03BbwXPnnZ",
     "role": "manager",
     "address": {
       "cep": "76801059",
@@ -304,6 +329,7 @@
     "secondary_name": "Teixeira",
     "cpf": "00000002640",
     "email": "usuario26@example.com",
+    "password": "F8lmNiFOnWgFW2R05+RpqdrE",
     "role": "technical",
     "address": {
       "cep": "01001000",
@@ -316,6 +342,7 @@
     "secondary_name": "Correia",
     "cpf": "00000002720",
     "email": "usuario27@example.com",
+    "password": "a4k4TbGf1vnaMRBEVl14AcAo",
     "role": "manager",
     "address": {
       "cep": "01310100",
@@ -328,6 +355,7 @@
     "secondary_name": "Moreira",
     "cpf": "00000002801",
     "email": "usuario28@example.com",
+    "password": "/ZdCojTruAHgi8JyG1iKgU1I",
     "role": "manager",
     "address": {
       "cep": "20040020",
@@ -340,6 +368,7 @@
     "secondary_name": "Cavalcanti",
     "cpf": "00000002992",
     "email": "usuario29@example.com",
+    "password": "XQn3aL4JP5qMU3QIx1kV2mLK",
     "role": "financial",
     "address": {
       "cep": "30140071",
@@ -352,6 +381,7 @@
     "secondary_name": "Batista",
     "cpf": "00000003026",
     "email": "usuario30@example.com",
+    "password": "Xl8i0CJ/h2rRgGZPddshHiOI",
     "role": "technical",
     "address": {
       "cep": "80010000",
@@ -364,6 +394,7 @@
     "secondary_name": "Moura",
     "cpf": "00000003107",
     "email": "usuario31@example.com",
+    "password": "VKgVTrAaRCJla1shHyOBeUkY",
     "role": "manager",
     "address": {
       "cep": "90010000",
@@ -376,6 +407,7 @@
     "secondary_name": "Campos",
     "cpf": "00000003298",
     "email": "usuario32@example.com",
+    "password": "yU0QYWGab907wM/LctZ/2ygD",
     "role": "client",
     "address": {
       "cep": "88010000",
@@ -388,6 +420,7 @@
     "secondary_name": "Azevedo",
     "cpf": "00000003379",
     "email": "usuario33@example.com",
+    "password": "ixctlxiYhF30W+uWl7cmD+sp",
     "role": "client",
     "address": {
       "cep": "74003010",
@@ -400,6 +433,7 @@
     "secondary_name": "Dantas",
     "cpf": "00000003450",
     "email": "usuario34@example.com",
+    "password": "LTY5qcDkRZBgJ8l3WbopiunW",
     "role": "financial",
     "address": {
       "cep": "50030000",
@@ -412,6 +446,7 @@
     "secondary_name": "Farias",
     "cpf": "00000003530",
     "email": "usuario35@example.com",
+    "password": "d5HlQ6e9Ivgy/NE4++WxKvle",
     "role": "client",
     "address": {
       "cep": "60060000",
@@ -424,6 +459,7 @@
     "secondary_name": "Rezende",
     "cpf": "00000003611",
     "email": "usuario36@example.com",
+    "password": "Gz8oOyQE7aP/vf+YuMNh6d1q",
     "role": "technical",
     "address": {
       "cep": "65010000",
@@ -436,6 +472,7 @@
     "secondary_name": "Borges",
     "cpf": "00000003700",
     "email": "usuario37@example.com",
+    "password": "U41ZKZ1jWtepESsTBAD8m2nr",
     "role": "manager",
     "address": {
       "cep": "64000040",
@@ -448,6 +485,7 @@
     "secondary_name": "Pires",
     "cpf": "00000003883",
     "email": "usuario38@example.com",
+    "password": "9iN56T+mq5dUwu2SrtP673kn",
     "role": "technical",
     "address": {
       "cep": "66010000",
@@ -460,6 +498,7 @@
     "secondary_name": "Cunha",
     "cpf": "00000003964",
     "email": "usuario39@example.com",
+    "password": "lY/AU9BQp+FGLxQ315BnT54w",
     "role": "manager",
     "address": {
       "cep": "69005070",
@@ -472,6 +511,7 @@
     "secondary_name": "Machado",
     "cpf": "00000004006",
     "email": "usuario40@example.com",
+    "password": "9GIC7PyfeS819CBcBOLOMSlx",
     "role": "manager",
     "address": {
       "cep": "77001002",
@@ -484,6 +524,7 @@
     "secondary_name": "Neves",
     "cpf": "00000004189",
     "email": "usuario41@example.com",
+    "password": "xXMQkOUX4OiWZXWDy8xTzff0",
     "role": "manager",
     "address": {
       "cep": "79002000",
@@ -496,6 +537,7 @@
     "secondary_name": "Tavares",
     "cpf": "00000004260",
     "email": "usuario42@example.com",
+    "password": "uaz1m097nEXlOdVM1ey7y282",
     "role": "manager",
     "address": {
       "cep": "78005000",
@@ -508,6 +550,7 @@
     "secondary_name": "Duarte",
     "cpf": "00000004340",
     "email": "usuario43@example.com",
+    "password": "Ins2yt3IjZ28vwqG2TRonomk",
     "role": "manager",
     "address": {
       "cep": "57020000",
@@ -520,6 +563,7 @@
     "secondary_name": "Vieira",
     "cpf": "00000004421",
     "email": "usuario44@example.com",
+    "password": "biIx5NLAhNpY2rBMqGoPrOiY",
     "role": "technical",
     "address": {
       "cep": "59025000",
@@ -532,6 +576,7 @@
     "secondary_name": "Ramos",
     "cpf": "00000004502",
     "email": "usuario45@example.com",
+    "password": "cDaLy4uTXLFmMQE+gOEvLcJ5",
     "role": "manager",
     "address": {
       "cep": "58010000",
@@ -544,6 +589,7 @@
     "secondary_name": "Antunes",
     "cpf": "00000004693",
     "email": "usuario46@example.com",
+    "password": "MWQCt7rZlLW/UDML0kyxZaXf",
     "role": "financial",
     "address": {
       "cep": "49010000",
@@ -556,6 +602,7 @@
     "secondary_name": "Guimarães",
     "cpf": "00000004774",
     "email": "usuario47@example.com",
+    "password": "zjgb3A86OvCuj2Q6UcVPy9Ql",
     "role": "admin",
     "address": {
       "cep": "29010001",
@@ -568,6 +615,7 @@
     "secondary_name": "Nunes",
     "cpf": "00000004855",
     "email": "usuario48@example.com",
+    "password": "Fo1gGquUAV1DkxkLY5rkNzUc",
     "role": "financial",
     "address": {
       "cep": "68900073",
@@ -580,6 +628,7 @@
     "secondary_name": "Melo",
     "cpf": "00000004936",
     "email": "usuario49@example.com",
+    "password": "5oKB2IXaLC8af8Jm2UG1eNHf",
     "role": "client",
     "address": {
       "cep": "69900060",
@@ -592,6 +641,7 @@
     "secondary_name": "Peixoto",
     "cpf": "00000005070",
     "email": "usuario50@example.com",
+    "password": "gKDgMz3IQ134G3R5MX1Kx44b",
     "role": "technical",
     "address": {
       "cep": "76801059",

@@ -37,6 +37,7 @@ async def test_repository_crud_and_duplicate_cpf():
             session.commit.side_effect = sync_session.commit
             session.get.side_effect = sync_session.get
             session.scalars.side_effect = sync_session.scalars
+            session.scalar.side_effect = sync_session.scalar
             session.delete.side_effect = sync_session.delete
             session.refresh.side_effect = sync_session.refresh
             repository = SQLAlchemyUserRepository(session)
@@ -46,11 +47,13 @@ async def test_repository_crud_and_duplicate_cpf():
             assert user.create_at is not None
             assert user.update_at is not None
             assert await repository.get_by_id(user.id) == user
+            assert await repository.get_by_cpf(user.cpf) == user
+            assert await repository.get_by_cpf("12345678909") is None
             assert await repository.list(offset=0, limit=10) == [user]
             assert await repository.list(offset=1, limit=10) == []
 
             sync_session.execute(text(
-                "UPDATE cliente SET update_at = '2000-01-01 00:00:00'"
+                "UPDATE users SET update_at = '2000-01-01 00:00:00'"
             ))
             sync_session.commit()
             sync_session.expire_all()
