@@ -1,6 +1,7 @@
 import asyncio
 
 from app.config import settings
+from app.modules.orders.infrastructure.models.notification_model import NotificationModel
 from app.modules.orders.infrastructure.models.orders_model import OrderModel
 from app.modules.quotes.infrastructure.models.budgets_model import BudgetModel
 from app.modules.quotes.infrastructure.models.stock_model import StockModel
@@ -25,6 +26,7 @@ async def create_tables() -> None:
                         BudgetModel.__table__,
                         StockModel.__table__,
                         OrderModel.__table__,
+                        NotificationModel.__table__,
                     ],
                     checkfirst=True,
                 )

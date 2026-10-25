@@ -29,7 +29,10 @@ class IngestionError(Exception):
     """Falha de entrada ou de comunicação; a ingestão deve parar."""
 
 
-def load_records(data_dir: Path, resources: list[str], *, user_password: str | None = None) -> dict[str, list[dict]]:
+def load_records(
+    data_dir: Path, resources: list[str], *, user_password: str | None = None,
+    resolve_stock_names: bool = False,
+) -> dict[str, list[dict]]:
     """Valida todos os arquivos selecionados antes de permitir qualquer POST."""
     records = {}
     errors = []
@@ -48,6 +51,24 @@ def load_records(data_dir: Path, resources: list[str], *, user_password: str | N
         records[resource] = []
         for index, item in enumerate(data, start=1):
             try:
+                if resolve_stock_names and resource == "budgets" and isinstance(item, dict):
+                    item = dict(item)
+                    if isinstance(item.get("tools"), list):
+                        tools = []
+                        for tool in item["tools"]:
+                            if isinstance(tool, dict) and "tool_id" not in tool:
+                                matches = [
+                                    position for position, stock in enumerate(records.get("stock", []), 1)
+                                    if stock["tool_name"] == tool.get("tool_name")
+                                ]
+                                if len(matches) == 1:
+                                    tool = {**tool, "tool_id": f"__seed_stock_position__:{matches[0]}"}
+                                else:
+                                    errors.append(
+                                        f"budgets.json, registro {index}: tool_name sem correspondência única em stock.json."
+                                    )
+                            tools.append(tool)
+                        item["tools"] = tools
                 if resource == "users" and isinstance(item, dict) and user_password:
                     item = {"password": user_password, **item}
                 validated = schema.model_validate(item)

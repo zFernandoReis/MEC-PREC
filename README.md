@@ -1,5 +1,157 @@
 # MEC System
 
+## Docker Compose
+
+Copie `.env.example` para `.env`, defina `POSTGRES_PASSWORD` e um
+`JWT_SECRET_KEY` aleatório de pelo menos 32 caracteres, e execute:
+
+```powershell
+docker compose up -d --build
+```
+
+O Compose inicia três serviços:
+
+- `postgres`: PostgreSQL 16 com volume persistente `postgres_data`, publicado
+  em `localhost:5432`. Use as credenciais `POSTGRES_USER`, `POSTGRES_PASSWORD`
+  e `POSTGRES_DB` do `.env`. `POSTGRES_EXTERNAL_PORT` altera a porta no host;
+  a comunicação entre containers continua em `postgres:5432`.
+- `app`: API em `http://localhost:8000/docs`. Espera o banco ficar saudável,
+  cria tabelas ausentes e aplica a migração de `notification_type` antes de
+  executar todos os testes em `tests` (unitários e integração), mostrando o
+  resultado no log. Após aprovação, importa `dados` e inicia o Uvicorn.
+  Falha na preparação, testes ou carga impede a API de iniciar.
+- `scheduler`: espera a API ficar saudável, executa os dois jobs imediatamente
+  e repete a cada 1 hora, em um único processo e sem sobrepor ciclos.
+  Cada job usa sua própria sessão; falha em um não impede a execução do outro.
+
+O intervalo é contado a partir do início de cada ciclo. Se um ciclo ultrapassar
+uma hora, o próximo começa quando ele terminar. Não há reposição dos ciclos
+perdidos enquanto os containers estiverem parados. O scheduler roda enquanto
+seu container estiver ativo; a dependência da API é verificada na inicialização.
+
+Os serviços usam `restart: unless-stopped`: voltam após reiniciar o Docker,
+desde que não tenham sido parados manualmente. O Docker precisa estar ativo
+no servidor. A API e o scheduler usam a mesma imagem, com dependências de
+instaladas a partir de `uv.lock`, incluindo pytest para a validação de startup.
+Os arquivos de `tests` e `dados` são incluídos na imagem; o `.env` não é copiado.
+
+A carga inicial segue `users`, `stock`, `vehicles`, `budgets`, remapeando as
+relações para os IDs gerados. Usa as mesmas rotas e regras da aplicação em uma
+instância interna, sem abrir uma porta HTTP. Consulta o ViaCEP, portanto a
+primeira inicialização precisa de acesso à internet. As senhas vêm dos JSONs;
+para registros sem senha, configure `MEC_INITIAL_PASSWORD` no `.env`.
+Nenhuma senha é registrada no log.
+Na carga automática, itens de orçamento sem `tool_id` são associados por
+`tool_name` a uma entrada única de `stock.json`, usando o ID gerado na carga.
+Nomes ausentes ou ambíguos impedem a importação. O importador HTTP manual
+continua exigindo `tool_id` explícito.
+
+Toda a carga ocorre em uma transação. Em falha, os dados da tentativa são
+revertidos. Ao concluir, grava `initial_dados_v1` em `bootstrap_ingestions`,
+no mesmo banco. Nos próximos reinícios executa os testes novamente e pula a
+carga já concluída. Alterações posteriores nos JSONs não são reimportadas
+automaticamente. Registros existentes que conflitem com os arquivos fazem a
+carga falhar, sem sobrescrevê-los. Os testes atuais de integração verificam a
+conexão PostgreSQL; novos testes que alterem dados devem usar banco isolado.
+O healthcheck concede até cinco minutos de preparação antes de contabilizar
+falhas, para acomodar os testes e as consultas de CEP.
+
+`TZ` define a data local dos jobs (padrão: `America/Sao_Paulo`). Configure
+`APP_PORT`, `NOTIFICATION_DAYS_BEFORE` e `NOTIFICATION_BATCH_SIZE` no `.env`
+se necessário. Dentro dos containers, o banco sempre é `postgres:5432`.
+O volume criado é um banco separado do PostgreSQL instalado no host.
+As credenciais `POSTGRES_*` inicializam o volume na primeira execução;
+alterá-las no `.env` não altera usuários de um volume já existente.
+Se alterar `POSTGRES_PASSWORD` com o volume já inicializado, recrie o container
+do banco para receber o novo ambiente e sincronize a senha sem apagar dados:
+
+```powershell
+docker compose up -d postgres
+powershell -ExecutionPolicy Bypass -File scripts/sync_postgres_credentials.ps1
+docker compose up -d --wait --wait-timeout 600
+```
+
+O script exige acesso administrativo local ao container e mantém o usuário
+`POSTGRES_USER` existente. O healthcheck agora executa uma consulta autenticada:
+senha incorreta ou banco ausente impedem a inicialização da API. A mensagem
+`password authentication failed` é uma falha de conexão ao iniciar, mesmo
+quando a construção da imagem terminou com sucesso.
+O bootstrap não executa migrações de outros esquemas legados.
+
+Para acompanhar e encerrar:
+
+```powershell
+docker compose logs -f app scheduler
+docker compose down
+```
+
+`down` preserva o banco. `docker compose down -v` remove o volume e todos
+os dados. Após alterar o código, execute novamente `up -d --build`.
+
+## Job de notificações de prazo
+
+Crie as tabelas com `uv run python -m app.bootstrap.create_tables` e execute:
+
+```powershell
+uv run python -m app.bootstrap.notify_upcoming_orders
+```
+
+O job consulta `orders` em lotes de 100 e cria registros em `notifications`
+para ordens com `service_date_end` entre `date.today()` e os próximos 3 dias,
+incluindo os dois limites. Usa a data local do processo; configure o servidor
+com o fuso horário desejado. Ignora prazos nulos, vencidos e ordens finalizadas
+ou entregues. O nome do cliente vem de `users`; os demais dados são copiados
+da ordem. Uma ordem com o mesmo prazo e tipo já notificado não gera outro aviso.
+Se o prazo mudar, pode gerar uma nova notificação para a nova data.
+
+Para manter um processo independente verificando a cada hora:
+
+```powershell
+uv run python -m app.bootstrap.notify_upcoming_orders --days-before 3 --interval-seconds 3600
+```
+
+Sem `--interval-seconds`, executa uma vez e encerra, permitindo agendamento
+externo. `--days-before 0` verifica apenas os prazos de hoje e `--batch-size`
+ajusta o tamanho dos lotes. Cada lote é confirmado em uma transação; em falha,
+o lote atual é revertido e os anteriores são preservados. Em modo contínuo,
+registra o erro e tenta novamente no próximo intervalo. No PostgreSQL, bloqueia
+as ordens do lote com `FOR UPDATE SKIP LOCKED` para coordenar instâncias deste
+job. Não cria rotas HTTP nem envia e-mails.
+
+## Job de notificações de atraso
+
+O segundo job cria notificações do tipo `overdue` quando
+`service_date_end < date.today()` e `order_status == em_execucao`.
+Prazos de hoje, futuros ou nulos e os demais status são ignorados.
+O aviso de atraso é independente do aviso `upcoming`: uma ordem pode receber
+ambos, mas cada tipo é criado apenas uma vez por ordem e data de término.
+Alterar o prazo permite um novo aviso quando a nova data estiver vencida.
+
+Para banco existente, antes de executar qualquer um dos dois jobs atualizados:
+
+```powershell
+uv run python -m app.bootstrap.migrate_notification_type
+```
+
+A migração pode ser repetida e classifica os avisos existentes como `upcoming`.
+Para banco novo, use `app.bootstrap.create_tables`.
+
+Execução única:
+
+```powershell
+uv run python -m app.bootstrap.notify_overdue_orders
+```
+
+Execução contínua, a cada hora:
+
+```powershell
+uv run python -m app.bootstrap.notify_overdue_orders --interval-seconds 3600
+```
+
+Também aceita `--batch-size` (padrão: 100) e usa a data local do processo.
+Segue as mesmas regras de transação, rollback e repetição em falha do job de
+prazo próximo. Execute os jobs como processos independentes da API.
+
 ## Autenticação JWT
 
 A implementação fica em `src/app/shared/infrastructure/security`, integrada ao

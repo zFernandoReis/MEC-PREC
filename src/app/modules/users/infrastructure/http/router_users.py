@@ -29,6 +29,14 @@ async def list_users(
     return await use_cases.list_users.execute(offset=offset, limit=limit)
 
 
+@router.get("/cpf/{cpf}", response_model=UserReadResponse)
+async def get_user_by_cpf(
+    cpf: Annotated[str, Path(pattern=r"^[0-9]{11}$")], use_cases: UseCases
+):
+    logger.debug("Recebida consulta HTTP de usuário por CPF.")
+    return await use_cases.get_user.get_by_cpf(cpf)
+
+
 @router.get("/{user_id}", response_model=UserReadResponse)
 async def get_user(user_id: UserId, use_cases: UseCases):
     logger.debug("Recebida consulta HTTP de usuário: user_id=%s", user_id)

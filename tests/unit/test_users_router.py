@@ -18,6 +18,9 @@ class FakeUserRepository:
     async def get_by_id(self, user_id):
         return deepcopy(self.users.get(user_id))
 
+    async def get_by_cpf(self, cpf):
+        return deepcopy(next((user for user in self.users.values() if user.cpf == cpf), None))
+
     async def list(self, *, offset, limit):
         return deepcopy(list(self.users.values())[offset:offset + limit])
 
@@ -90,6 +93,31 @@ def test_crud(client):
     assert response.content == b""
     assert client.get(url).status_code == 404
     assert client.get("/users").json() == []
+
+
+def test_get_user_by_cpf(client):
+    created = client.post("/users", json=payload())
+    assert created.status_code == 201
+    user = created.json()
+
+    response = client.get(f'/users/cpf/{user["cpf"]}')
+
+    assert response.status_code == 200
+    assert response.json() == {
+        key: value for key, value in user.items() if key != "system_id"
+    }
+    assert "password" not in response.json()
+    assert "password_hash" not in response.json()
+
+
+def test_get_user_by_cpf_not_found(client):
+    assert client.post("/users", json=payload()).status_code == 201
+    assert client.get("/users/cpf/12345678909").status_code == 404
+
+
+@pytest.mark.parametrize("cpf", ["invalid", "5299822472", "529982247250", "529.982.247-25"])
+def test_get_user_by_cpf_invalid_format(client, cpf):
+    assert client.get(f"/users/cpf/{cpf}").status_code == 422
 
 
 @pytest.mark.parametrize("method", ["get", "patch", "delete"])

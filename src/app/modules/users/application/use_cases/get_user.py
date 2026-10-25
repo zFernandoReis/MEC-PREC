@@ -16,3 +16,12 @@ class GetUserUseCase:
             raise UserNotFoundError()
         logger.debug("Usuário encontrado: user_id=%s", user_id)
         return user
+
+    async def get_by_cpf(self, cpf: str) -> User:
+        logger.debug("Consultando usuário por CPF.")
+        user = await self.user_repository.get_by_cpf(cpf)
+        if user is None:
+            logger.debug("Usuário não encontrado por CPF.")
+            raise UserNotFoundError()
+        logger.debug("Usuário encontrado: user_id=%s", user.id)
+        return user
