@@ -28,10 +28,13 @@ class SQLAlchemyOrderRepository:
         model = await self.session.get(OrderModel, order_id)
         return model.to_entity() if model is not None else None
 
-    async def list(self, *, offset: int, limit: int) -> list[Order]:
+    async def list(self, *, offset: int, limit: int, client_id: int | None = None) -> list[Order]:
         logger.debug("Consultando página de ordens: offset=%s, limit=%s", offset, limit)
+        statement = select(OrderModel)
+        if client_id is not None:
+            statement = statement.where(OrderModel.client_id == client_id)
         result = await self.session.scalars(
-            select(OrderModel).order_by(OrderModel.order_id).offset(offset).limit(limit)
+            statement.order_by(OrderModel.order_id).offset(offset).limit(limit)
         )
         return [model.to_entity() for model in result]
 

@@ -10,9 +10,9 @@ from sqlalchemy.orm import Session
 
 from app.modules.orders.application.dtos.notification_dto import CreateNotificationDTO
 from app.modules.orders.application.exceptions import NotificationNotFoundError
-from app.modules.orders.application.uses_cases.create_notification import CreateNotificationUseCase
-from app.modules.orders.application.uses_cases.delete_notification import DeleteNotificationUseCase
-from app.modules.orders.application.uses_cases.get_notification import GetNotificationUseCase
+from app.modules.orders.application.use_cases.create_notification import CreateNotificationUseCase
+from app.modules.orders.application.use_cases.delete_notification import DeleteNotificationUseCase
+from app.modules.orders.application.use_cases.get_notification import GetNotificationUseCase
 from app.modules.orders.domain.entities.notification import Notification
 from app.modules.orders.domain.enums.order_status import OrderStatus
 from app.modules.orders.infrastructure.models.notification_model import NotificationModel

@@ -1,0 +1,67 @@
+# REST Client (VS Code). Execute o login antes das demais requisições.
+# Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
+@baseUrl = http://localhost:8000
+@cpf = {{$processEnv MEC_HTTP_CPF}}
+@password = {{$processEnv MEC_HTTP_PASSWORD}}
+@token = {{login.response.body.$.access_token}}
+# Todas as rotas deste arquivo exigem login de administrador.
+@searchCpf = 11144477735
+@userId = {{createUser.response.body.$.id}}
+@offset = 0
+@limit = 100
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{password}}"
+}
+
+### Criar (201)
+# @name createUser
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "primary_name": "Cliente",
+  "secondary_name": "Exemplo",
+  "cpf": "11144477735",
+  "email": "cliente.http@example.com",
+  "password": "Senha-exemplo-123!",
+  "role": "client",
+  "address": {
+    "cep": "01001000",
+    "number": "10",
+    "complement": "Sala 1"
+  }
+}
+
+### Listar com paginação
+GET {{baseUrl}}/users?offset={{offset}}&limit={{limit}}
+Authorization: Bearer {{token}}
+
+### Consultar por CPF
+GET {{baseUrl}}/users/cpf/{{searchCpf}}
+Authorization: Bearer {{token}}
+
+### Consultar por ID
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### Atualizar
+PATCH {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "primary_name": "Cliente Atualizado",
+  "email": "cliente.atualizado@example.com"
+}
+
+### Excluir o registro selecionado (204) — execute somente quando desejar removê-lo
+DELETE {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}

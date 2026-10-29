@@ -8,6 +8,7 @@ from fastapi.exception_handlers import request_validation_exception_handler
 from sqlalchemy.exc import IntegrityError
 
 from app.config import settings
+from app.modules.orders.application.exceptions import OrderNotFoundError
 from app.modules.orders.application.ports.order_repository import OrderRepository
 from app.modules.orders.infrastructure.http.router_orders import router as orders_router
 from app.modules.quotes.application.ports.budget_repository import BudgetRepository
@@ -92,6 +93,10 @@ def create_app(user_repository: UserRepository | None = None, budget_repository:
     @application.exception_handler(UserNotFoundError)
     async def user_not_found(request: Request, exc: UserNotFoundError):
         logger.debug("Tratando usuário não encontrado; resposta HTTP 404.")
+        return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+    @application.exception_handler(OrderNotFoundError)
+    async def order_not_found(request: Request, exc: OrderNotFoundError):
         return JSONResponse(status_code=404, content={"detail": str(exc)})
 
     @application.exception_handler(ValueError)

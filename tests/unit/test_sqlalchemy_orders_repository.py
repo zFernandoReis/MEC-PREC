@@ -54,6 +54,17 @@ async def test_order_repository_crud(order):
             assert await repository.list(offset=1, limit=1) == [second]
             assert await repository.list(offset=2, limit=1) == []
 
+            second.client_id = 2
+            await repository.update(second)
+            third = replace(order, order_id=None, client_id=2, system_id=uuid4())
+            await repository.save(third)
+            assert await repository.list(client_id=1, offset=0, limit=10) == [order]
+            assert await repository.list(client_id=2, offset=0, limit=1) == [second]
+            assert await repository.list(client_id=2, offset=1, limit=1) == [third]
+            assert await repository.list(client_id=2, offset=2, limit=1) == []
+            assert await repository.list(client_id=999, offset=0, limit=10) == []
+            await repository.delete(third)
+
             sync_session.execute(text(
                 "UPDATE orders SET update_at = '2000-01-01 00:00:00' WHERE order_id = 1"
             ))

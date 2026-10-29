@@ -1,7 +1,9 @@
 from uuid import UUID
 
 from app.modules.orders.application.exceptions import NotificationNotFoundError
-from app.modules.orders.application.ports.notification_repository import NotificationRepository
+from app.modules.orders.application.ports.notification_repository import (
+    NotificationRepository,
+)
 from app.modules.orders.domain.entities.notification import Notification
 from app.shared.infrastructure.logging import logger
 

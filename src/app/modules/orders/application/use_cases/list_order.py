@@ -7,8 +7,8 @@ class ListOrdersUseCase:
     def __init__(self, order_repository: OrderRepository):
         self.order_repository = order_repository
 
-    async def execute(self, *, offset: int = 0, limit: int = 100) -> list[Order]:
+    async def execute(self, *, offset: int = 0, limit: int = 100, client_id: int | None = None) -> list[Order]:
         logger.debug("Listando ordens de serviço: offset=%s, limit=%s", offset, limit)
-        orders = await self.order_repository.list(offset=offset, limit=limit)
+        orders = await self.order_repository.list(offset=offset, limit=limit, client_id=client_id)
         logger.debug("Listagem de ordens de serviço concluída: quantidade=%s", len(orders))
         return orders

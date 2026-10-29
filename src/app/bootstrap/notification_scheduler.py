@@ -1,4 +1,3 @@
-"""Executa os jobs de notificação ao iniciar e depois a cada hora."""
 
 import argparse
 import asyncio
@@ -36,8 +35,8 @@ async def run(*, days_before: int, batch_size: int) -> None:
             if stopping.is_set():
                 break
             # Usa relógio monotônico; não sobrepõe execuções nem acumula ciclos
-            # se uma varredura levar mais de uma hora.
-            delay = max(0, 3600 - (loop.time() - started))
+            # se uma varredura levar mais de 30 segundos.
+            delay = max(0, 30 - (loop.time() - started))
             try:
                 await asyncio.wait_for(stopping.wait(), timeout=delay)
             except TimeoutError:

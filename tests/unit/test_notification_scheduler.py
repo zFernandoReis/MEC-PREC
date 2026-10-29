@@ -45,9 +45,9 @@ def test_preparation_failure_prevents_server_start(monkeypatch):
     start.assert_not_called()
 
 
-async def test_scheduler_waits_one_hour_and_stops_gracefully(monkeypatch):
+async def test_scheduler_waits_thirty_seconds_and_stops_gracefully(monkeypatch):
     loop = MagicMock()
-    loop.time.side_effect = [100, 110, 3700]
+    loop.time.side_effect = [100, 110, 130]
     callbacks = {}
     loop.add_signal_handler.side_effect = lambda sig, callback: callbacks.update({sig: callback})
     cycles = 0
@@ -59,9 +59,9 @@ async def test_scheduler_waits_one_hour_and_stops_gracefully(monkeypatch):
             callbacks[signal.SIGTERM]()
 
     async def wait(awaitable, *, timeout):
-        # Fecha a coroutine sem uma espera real de uma hora.
+        # Fecha a coroutine sem uma espera real de 30 segundos.
         awaitable.close()
-        assert timeout == 3590
+        assert timeout == 20
         raise TimeoutError
 
     dispose = AsyncMock()

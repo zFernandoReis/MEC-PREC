@@ -1,0 +1,54 @@
+# REST Client (VS Code). Execute o login antes das demais requisições.
+# Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
+@baseUrl = http://localhost:8000
+@cpf = 00000000191
+@password = KIRL01a39joiR/eV43QifMtN
+@token = {{login.response.body.$.access_token}}
+@refreshToken = {{login.response.body.$.refresh_token}}
+@renewedToken = {{refresh.response.body.$.access_token}}
+@renewedRefreshToken = {{refresh.response.body.$.refresh_token}}
+@newPassword = {{$processEnv MEC_HTTP_NEW_PASSWORD}}
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{password}}"
+}
+
+### Consultar usuário autenticado
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+### Renovar sessão (invalida o par anterior; execute uma vez por login)
+# @name refresh
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refresh_token": "{{refreshToken}}"
+}
+
+### Consultar usuário após renovação
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{renewedToken}}
+
+### Alterar senha (204; invalida a sessão)
+# Execute após um novo login, sem executar refresh entre login e esta requisição.
+# Depois da alteração, atualize MEC_HTTP_PASSWORD e faça login novamente.
+POST {{baseUrl}}/auth/change-password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "current_password": "{{password}}",
+  "new_password": "{{newPassword}}"
+}
+
+### Encerrar sessão (204)
+# Execute após um novo login. Se acabou de renovar, use renewedToken no cabeçalho.
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{token}}

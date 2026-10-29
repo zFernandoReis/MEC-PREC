@@ -21,13 +21,18 @@ O Compose inicia três serviços:
   resultado no log. Após aprovação, importa `dados` e inicia o Uvicorn.
   Falha na preparação, testes ou carga impede a API de iniciar.
 - `scheduler`: espera a API ficar saudável, executa os dois jobs imediatamente
-  e repete a cada 1 hora, em um único processo e sem sobrepor ciclos.
+  e repete a cada 30 segundos, em um único processo e sem sobrepor ciclos.
   Cada job usa sua própria sessão; falha em um não impede a execução do outro.
 
 O intervalo é contado a partir do início de cada ciclo. Se um ciclo ultrapassar
-uma hora, o próximo começa quando ele terminar. Não há reposição dos ciclos
+30 segundos, o próximo começa quando ele terminar. Não há reposição dos ciclos
 perdidos enquanto os containers estiverem parados. O scheduler roda enquanto
 seu container estiver ativo; a dependência da API é verificada na inicialização.
+
+O agendamento fica em `src/app/bootstrap/notification_scheduler.py`, na função
+`run`: `delay = max(0, 30 - (loop.time() - started))`. Os 30 segundos definem
+o intervalo entre os inícios dos ciclos. O serviço `scheduler` do
+`docker-compose.yml` inicia esse módulo.
 
 Os serviços usam `restart: unless-stopped`: voltam após reiniciar o Docker,
 desde que não tenham sido parados manualmente. O Docker precisa estar ativo
@@ -207,8 +212,35 @@ O modelo `User` contém apenas o hash, omitido no repr e nos DTOs de resposta.
 Envie `Authorization: Bearer <access_token>` nas rotas protegidas. No Swagger,
 use **Authorize** e cole o access token retornado pelo login.
 Todas as rotas de usuários exigem administrador, inclusive criação e mudança
-de papel. As rotas de veículos, estoque, orçamentos e ordens exigem usuário
-autenticado; não foi adicionada restrição por proprietário nesses recursos.
+de papel. As rotas de veículos, estoque e orçamentos exigem usuário autenticado;
+esses três recursos ainda não têm restrição por proprietário.
+
+Nas ordens de serviço, usuários com papel `client` podem apenas consultar suas
+próprias OS. `GET /orders` filtra pelo ID do usuário autenticado antes de aplicar
+a paginação; parâmetros enviados pelo cliente não alteram esse proprietário.
+`GET /orders/{order_id}` retorna 404 tanto para uma OS alheia quanto inexistente.
+POST, PATCH e DELETE de ordens retornam 403 para clientes, inclusive nas próprias
+OS. Os papéis internos `admin`, `manager`, `technical` e `financial` mantêm acesso
+à consulta de todas as ordens e às operações de criação, alteração e exclusão.
+Sem autenticação, as rotas de ordens retornam 401.
+
+### CRUD de ordens de serviço
+
+| Método | Rota | Resultado |
+| --- | --- | --- |
+| POST | `/orders` | Cria uma OS (201) |
+| GET | `/orders?offset=0&limit=100` | Lista OS com paginação e escopo do usuário |
+| GET | `/orders/{order_id}` | Consulta uma OS (200) |
+| PATCH | `/orders/{order_id}` | Atualiza somente os campos enviados (200) |
+| DELETE | `/orders/{order_id}` | Exclui uma OS, sem corpo de resposta (204) |
+
+O PATCH aceita, por exemplo, `{"service_name":"Alinhamento"}`. Campos omitidos
+mantêm seu valor. `service_description` e `duration_service_days` aceitam `null`
+para limpar o campo; os demais campos não aceitam `null` explícito. Identificadores
+gerados pelo sistema não podem ser alterados no corpo da requisição. Consulta,
+atualização e exclusão de OS inexistente retornam 404. Conflitos de integridade
+do banco retornam 409. As restrições de autorização descritas acima se aplicam
+a todas essas operações. Exemplos executáveis estão em [http/orders.http](http/orders.http).
 
 Exemplo no PowerShell (a senha fica oculta durante a digitação):
 

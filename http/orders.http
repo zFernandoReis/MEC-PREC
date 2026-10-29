@@ -1,0 +1,72 @@
+# REST Client (VS Code). Execute o login antes das demais requisições.
+# Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
+@baseUrl = http://localhost:8000
+@cpf = {{$processEnv MEC_HTTP_CPF}}
+@password = {{$processEnv MEC_HTTP_PASSWORD}}
+@token = {{login.response.body.$.access_token}}
+# Informe IDs existentes de cliente, técnico, responsável, orçamento e veículo.
+@clientId = 1
+@technicalId = 2
+@responsibleId = 2
+@budgetId = 1
+@vehicleId = 1
+# Status: recebida, em_diagnostico, aguardando_aprovacao,
+# em_execucao, finalizada, entregue.
+@orderId = {{createOrder.response.body.$.order_id}}
+@offset = 0
+@limit = 100
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{password}}"
+}
+
+### Criar (201)
+# @name createOrder
+POST {{baseUrl}}/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "client_id": {{clientId}},
+  "client_email": "cliente.http@example.com",
+  "technical_id": {{technicalId}},
+  "technical_name": "Técnico Exemplo",
+  "technical_email": "tecnico.http@example.com",
+  "budget_id": {{budgetId}},
+  "vehicle_id": {{vehicleId}},
+  "service_name": "Troca de óleo",
+  "technical_responser_id": {{responsibleId}},
+  "technical_responser_name": "Técnico Responsável",
+  "technical_responser_email": "responsavel.http@example.com",
+  "duration_service_hours": 24,
+  "order_status": "recebida",
+  "service_description": "Troca de óleo e filtro"
+}
+
+### Listar com paginação
+GET {{baseUrl}}/orders?offset={{offset}}&limit={{limit}}
+Authorization: Bearer {{token}}
+
+### Consultar por ID
+GET {{baseUrl}}/orders/{{orderId}}
+Authorization: Bearer {{token}}
+
+### Atualizar parcialmente (200); campos omitidos são preservados
+PATCH {{baseUrl}}/orders/{{orderId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "order_status": "em_execucao",
+  "service_description": "Troca de óleo e filtro"
+}
+
+### Excluir o registro selecionado (204) — execute somente quando desejar removê-lo
+DELETE {{baseUrl}}/orders/{{orderId}}
+Authorization: Bearer {{token}}

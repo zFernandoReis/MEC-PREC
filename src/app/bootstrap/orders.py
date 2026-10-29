@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
 from app.modules.orders.application.ports.order_repository import OrderRepository
-from app.modules.orders.application.uses_cases.create_order import CreateOrderUseCase
-from app.modules.orders.application.uses_cases.delete_order import DeleteOrderUseCase
-from app.modules.orders.application.uses_cases.get_order import GetOrderUseCase
-from app.modules.orders.application.uses_cases.list_order import ListOrdersUseCase
-from app.modules.orders.application.uses_cases.update_order import UpdateOrderUseCase
+from app.modules.orders.application.use_cases.create_order import CreateOrderUseCase
+from app.modules.orders.application.use_cases.delete_order import DeleteOrderUseCase
+from app.modules.orders.application.use_cases.get_order import GetOrderUseCase
+from app.modules.orders.application.use_cases.list_order import ListOrdersUseCase
+from app.modules.orders.application.use_cases.update_order import UpdateOrderUseCase
 from app.shared.infrastructure.logging import logger
 
 

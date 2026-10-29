@@ -1,0 +1,57 @@
+# REST Client (VS Code). Execute o login antes das demais requisições.
+# Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
+@baseUrl = http://localhost:8000
+@cpf = {{$processEnv MEC_HTTP_CPF}}
+@password = {{$processEnv MEC_HTTP_PASSWORD}}
+@token = {{login.response.body.$.access_token}}
+@toolId = {{createStock.response.body.$.tool_id}}
+@offset = 0
+@limit = 100
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{password}}"
+}
+
+### Criar (201)
+# @name createStock
+POST {{baseUrl}}/stock
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tool_name": "Filtro de óleo HTTP",
+  "quantity": 10,
+  "price": 35.5,
+  "batch": "HTTP-001",
+  "replacement_time_hours": 24,
+  "replacement_time_days": 1,
+  "tool_description": "Filtro para demonstração da API"
+}
+
+### Listar com paginação
+GET {{baseUrl}}/stock?offset={{offset}}&limit={{limit}}
+Authorization: Bearer {{token}}
+
+### Consultar por ID
+GET {{baseUrl}}/stock/{{toolId}}
+Authorization: Bearer {{token}}
+
+### Atualizar
+PATCH {{baseUrl}}/stock/{{toolId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "quantity": 20,
+  "price": 39.9
+}
+
+### Excluir o registro selecionado (204) — execute somente quando desejar removê-lo
+DELETE {{baseUrl}}/stock/{{toolId}}
+Authorization: Bearer {{token}}

@@ -1,0 +1,85 @@
+# REST Client (VS Code). Execute o login antes das demais requisições.
+# Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
+@baseUrl = http://localhost:8000
+@cpf = 00000000191
+@password = KIRL01a39joiR/eV43QifMtN
+@token = {{login.response.body.$.access_token}}
+# Informe IDs existentes e o tool_id retornado pela criação de estoque.
+@technicalId = 2
+@clientId = 1
+@vehicleId = 1
+@toolId = MEC-2026-002
+# O POST não retorna budget_id. Liste os orçamentos e ajuste budgetId.
+@budgetId = 1
+@offset = 0
+@limit = 100
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{password}}"
+}
+
+### Criar (201)
+# @name createBudget
+POST {{baseUrl}}/budgets
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "technical_id": {{technicalId}},
+  "client_id": {{clientId}},
+  "vehicle_id": {{vehicleId}},
+  "technical_name": "Técnico Exemplo",
+  "technical_disponibility": true,
+  "service_name": "Troca de óleo",
+  "service_description": "Troca de óleo e filtro",
+  "tools": [
+    {
+      "tool_id": "{{toolId}}",
+      "tool_name": "Filtro de óleo HTTP",
+      "quantity": 1
+    }
+  ],
+  "amount": 250,
+  "duration_service_hours": 24,
+  "duration_service_days": 1
+}
+
+### Listar com paginação
+GET {{baseUrl}}/budgets?offset={{offset}}&limit={{limit}}
+Authorization: Bearer {{token}}
+
+### Consultar por ID
+GET {{baseUrl}}/budgets/{{budgetId}}
+Authorization: Bearer {{token}}
+
+### Atualizar
+PATCH {{baseUrl}}/budgets/{{budgetId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "technical_name": "Técnico Exemplo",
+  "technical_disponibility": true,
+  "service_name": "Troca de óleo",
+  "service_description": "Troca de óleo e filtro",
+  "tools": [
+    {
+      "tool_id": "{{toolId}}",
+      "tool_name": "Filtro de óleo HTTP",
+      "quantity": 1
+    }
+  ],
+  "amount": 280,
+  "duration_service_hours": 24,
+  "duration_service_days": 1
+}
+
+### Excluir o registro selecionado (204) — execute somente quando desejar removê-lo
+DELETE {{baseUrl}}/budgets/{{budgetId}}
+Authorization: Bearer {{token}}

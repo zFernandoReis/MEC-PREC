@@ -21,7 +21,7 @@ class OrdersReadResponse(BaseModel):
     technical_responser_id: int
     technical_responser_name: str
     technical_responser_email: str
-    duration_service_days: int
+    duration_service_days: int | None
     duration_service_hours: float
     order_status: OrderStatus
     service_date_start: datetime | None = None
