@@ -2,8 +2,6 @@
 
 [Índice da wiki](README.md) · [Voltar à arquitetura](03-arquitetura.md)
 
-Este MER descreve as seis tabelas mapeadas pelos modelos SQLAlchemy em `src/app/modules/*/infrastructure/models/`. Atributos, chaves e nulabilidade foram extraídos dos metadados dos modelos, sem conectar ao banco. Representam o esquema do código, não uma inspeção de um banco implantado.
-
 ## Legenda
 
 - `PK`: chave primária; `FK`: chave estrangeira; `UK`: restrição de unicidade.
@@ -160,42 +158,6 @@ erDiagram
 | `orders` → `notifications` | Uma ordem para zero ou muitas notificações; uma notificação pode não apontar para ordem. | `order_id` aceita nulo. |
 | `users` → `notifications` | Um usuário para zero ou muitas notificações em cada papel. | Cliente, técnico e responsável técnico são vínculos obrigatórios. |
 | `vehicles` → `notifications` | Um veículo para zero ou muitas notificações. | `vehicle_id` é obrigatório mesmo quando `order_id` está ausente. |
-
-As FKs garantem existência dos registros referenciados, mas não impõem por si só o papel do usuário nem que o cliente da ordem seja proprietário do veículo. Regras adicionais precisam ser verificadas na aplicação. O nome `technical_responser_id` foi mantido conforme o código.
-
-## Estoque e itens de orçamento
-
-`stock` aparece sem linha de relacionamento porque nenhum modelo declara FK para `stock.tool_id`. A coluna `budgets.tools` armazena uma lista JSONB de itens. A criação de orçamento consulta estoque pelos `tool_id`, agrega quantidades repetidas e considera o prazo de reposição quando falta quantidade.
-
-Esse vínculo é validado na aplicação, não pelo PostgreSQL. Não existe tabela associativa `budget_items`; desenhá-la como parte do esquema atual seria incorreto. A criação de orçamento também não representa automaticamente reserva ou baixa de estoque.
-
-## Identificadores e particularidades
-
-`users.id`, `vehicles.vehicle_id`, `budgets.budget_id` e `orders.order_id` são inteiros com `Identity`. `stock.tool_id` é string de até 100 caracteres; `notifications.notification_id` é UUID. Todos os seis modelos possuem também `system_id` UUID único. CPF e placa são únicos; e-mail de usuário não possui essa restrição.
-
-`Address` é um atributo composto de `UserModel`: seus campos são colunas de `users`, sem tabela de endereços separada. Hash de senha e versão dos tokens também ficam em `users`, sem tabela de credenciais própria.
-
-Nomes, e-mails e descrições são repetidos em orçamentos, ordens e notificações. Esses valores persistidos não são sincronizados automaticamente pelos relacionamentos ORM quando o cadastro original muda.
-
-Os valores `amount` e `price` são `float`, não `Numeric`/decimal. `create_at` e `update_at` registram criação e atualização, mas não constituem trilha completa de auditoria.
-
-O status da ordem aceita `recebida`, `em_diagnostico`, `aguardando_aprovacao`, `em_execucao`, `finalizada` e `entregue`. O enum define valores aceitos; não comprova uma máquina de estados que obrigue essa sequência. `notification_type` aceita `upcoming` e `overdue`, usando enum não nativo, com padrão `upcoming`.
-
-Os jobs evitam avisos repetidos para a mesma ordem, prazo e tipo pela lógica de processamento. `NotificationModel` não declara `UNIQUE` composto nesses três campos; o MER não atribui essa garantia ao banco.
-
-## Tabela operacional fora do ORM
-
-O bootstrap cria `bootstrap_ingestions` por SQL direto em [seed_initial_data.py](../src/app/bootstrap/seed_initial_data.py). Ela registra a conclusão da carga inicial e não é um dos seis modelos ORM.
-
-```mermaid
-erDiagram
-    bootstrap_ingestions {
-        varchar name PK "tamanho 100"
-        timestamptz completed_at "obrigatorio; default now()"
-    }
-```
-
-Não há FK para os modelos de negócio. O marcador `initial_dados_v1` permite pular uma carga já concluída.
 
 ## Fontes no repositório
 

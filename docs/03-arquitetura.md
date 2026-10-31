@@ -4,27 +4,7 @@
 
 ## Organização arquitetural
 
-O MEC System é um **monólito modular**, organizado por responsabilidades de negócio e por camadas. Os módulos `users`, `quotes` e `orders` compartilham uma aplicação FastAPI, uma base de código e um banco. O scheduler executa separadamente, usando a mesma imagem e os mesmos modelos. Essa separação de processo não transforma os módulos em microsserviços.
-
-A organização se inspira em arquitetura limpa e em portas e adaptadores: entidades representam o negócio, casos de uso coordenam operações, portas definem contratos e adaptadores acessam HTTP ou banco. Essa é uma leitura da estrutura existente, sem pressupor isolamento absoluto: os DTOs dependem de Pydantic; casos de uso importam logging compartilhado e, no cadastro de usuários, funções de segurança e `run_in_threadpool` do Starlette. Os jobs consultam modelos SQLAlchemy diretamente.
-
-## Pastas da raiz
-
-| Pasta ou arquivo | Responsabilidade e objetivo |
-| --- | --- |
-| `src/app/` | Código executável do backend. |
-| `dados/` | JSONs de usuários, veículos, estoque e orçamentos usados na ingestão. |
-| `scripts/` | Automação operacional; contém o script PowerShell de sincronização de credenciais do PostgreSQL no container. |
-| `tests/unit/` | Verificações focadas em regras, rotas, segurança, modelos, repositórios e inicialização; alguns testes usam banco isolado. |
-| `tests/integration/` | Verificação de conexão com PostgreSQL. |
-| `docs/` | Esta wiki e os diagramas arquiteturais. |
-| `.venv/`, `.pytest_cache/` | Ambiente local e cache de testes; não são camadas da aplicação. |
-| `.vscode/` | Configuração local do editor. |
-| `.git/` | Metadados de versionamento. |
-| `pyproject.toml`, `uv.lock`, `.python-version` | Configuração do pacote, dependências resolvidas e versão de Python para ferramentas locais. |
-| `Dockerfile`, `docker-compose.yml`, `.dockerignore` | Imagem, serviços e exclusões do contexto de construção. |
-| `.env.example`, `.env` | Exemplo de configuração e valores locais carregados pela aplicação. |
-| `.gitignore`, `README.md` | Exclusões de versionamento e instruções operacionais. |
+O MEC System é um **monólito modular**, organizado por responsabilidades de negócio e por camadas. Os módulos `users`, `quotes` e `orders` compartilham uma aplicação FastAPI, uma base de código e um banco. O scheduler executa separadamente, usando a mesma imagem e os mesmos modelos.
 
 ## Estrutura do backend
 
@@ -45,7 +25,7 @@ src/app/
 │   │   └── exceptions.py
 │   └── orders/
 │       ├── domain/{entities,enums}/
-│       ├── application/{dtos,ports,uses_cases}/
+│       ├── application/{dtos,ports,use_cases}/
 │       └── infrastructure/{http,jobs,models,repositories}/
 └── shared/infrastructure/
     ├── database/
@@ -53,25 +33,25 @@ src/app/
     └── security/
 ```
 
-As chaves agrupam subpastas existentes, não diretórios literais. A grafia real é `use_cases` em `users` e `quotes`, mas `uses_cases` em `orders`. Ambas cumprem a mesma função arquitetural. Os arquivos `__init__.py`, onde presentes, identificam ou inicializam pacotes Python.
-
 ### Camadas e responsabilidades
 
-| Caminho | O que faz | Exemplo e objetivo |
-| --- | --- | --- |
-| `domain/entities/` | Representa conceitos e validações de negócio, sem mapear tabelas. | `User`, `Vehicle`, `Budget`, `Stock`, `Order` e `Notification`. |
-| `domain/enums/` | Define conjuntos de valores aceitos. | Papéis, combustível, tipo de veículo, status da ordem e tipo de notificação. |
-| `users/domain/value_objects/` | Representa valores compostos sem identidade própria. | `Address` agrupa os dados de endereço. |
-| `application/dtos/` | Define objetos de transferência de dados para entrada dos casos de uso. | `CreateUserDTO` valida dados de cadastro; DTO não é tabela nem entidade de domínio. |
-| `application/use_cases/` e `application/uses_cases/` | Coordena uma operação de negócio e seus colaboradores. | Criar orçamento consulta estoque, calcula prazo e persiste a entidade. |
-| `application/ports/` | Declara contratos para repositórios e provedores. | `UserRepository` e `AddressProvider` permitem substituir implementações. |
-| `users/application/services/` | Reúne coordenação reutilizável entre casos de uso. | `AddressService` resolve endereços por meio do provedor. |
-| `application/exceptions.py` | Define erros específicos da aplicação em usuários e ordens. | Permite distinguir falhas do fluxo; em `quotes`, o arquivo fica na raiz do módulo. |
-| `infrastructure/http/` | Adapta chamadas HTTP: routers, schemas de resposta e dependências FastAPI. | Traduz entrada/saída e entrega o trabalho aos casos de uso. |
-| `infrastructure/models/` | Define tabelas, colunas e relacionamentos SQLAlchemy. | Conversões `from_entity` e `to_entity` conectam domínio e persistência. |
-| `infrastructure/repositories/` | Implementa as portas usando SQLAlchemy. | Executa consultas e gravações; vários métodos fazem commit e refresh. |
-| `users/infrastructure/clients/` | Implementa integração com serviços externos. | `ViaCepClient` consulta CEP por HTTPX. |
-| `orders/infrastructure/jobs/` | Executa processamento de notificações em lote. | Identifica ordens próximas do prazo ou atrasadas e grava notificações. |
+| Pasta | Função no projeto |
+| --- | --- |
+| `domain/` | Reúne as estruturas e regras que representam os conceitos centrais da aplicação, separadas dos detalhes de transporte HTTP e persistência. |
+| `domain/entities/` | Define objetos com identidade própria, seus atributos e as validações que mantêm esses objetos consistentes. |
+| `domain/enums/` | Define conjuntos fixos de valores aceitos, evitando variações na representação dos dados. |
+| `domain/value_objects/` | Agrupa atributos relacionados em objetos identificados por seus valores, sem identidade própria, e concentra suas validações. |
+| `application/` | Organiza as operações oferecidas pelo sistema e coordena a colaboração entre regras, contratos e serviços. |
+| `application/use_cases/` | Implementa cada operação da aplicação: recebe os dados de entrada, executa as etapas necessárias e aciona os colaboradores para produzir um resultado. |
+| `application/dtos/` | Define a estrutura dos dados transferidos para os casos de uso, incluindo tipos, campos obrigatórios e validações de entrada. |
+| `application/ports/` | Declara os contratos de acesso à persistência e aos serviços externos, permitindo substituir implementações sem alterar o contrato utilizado pelos casos de uso. |
+| `application/services/` | Concentra rotinas de coordenação reutilizáveis, evitando repetir a mesma sequência de operações em diferentes casos de uso. |
+| `infrastructure/` | Reúne as implementações técnicas que conectam a aplicação ao banco de dados, à interface HTTP e aos serviços externos. |
+| `infrastructure/http/` | Define rotas, schemas e dependências HTTP. Recebe requisições, encaminha os dados aos casos de uso e prepara as respostas da API. |
+| `infrastructure/models/` | Define o mapeamento entre objetos e tabelas do banco, incluindo colunas, tipos, restrições e relacionamentos. |
+| `infrastructure/repositories/` | Implementa os contratos de persistência, executando consultas e gravações e convertendo os dados entre os modelos do banco e os objetos da aplicação. |
+| `infrastructure/clients/` | Encapsula a comunicação com serviços externos, incluindo envio de requisições, leitura de respostas e tratamento de falhas de integração. |
+| `infrastructure/jobs/` | Implementa rotinas de processamento em segundo plano ou em lote, executadas fora do fluxo de uma requisição HTTP. |
 
 ### Composição e serviços compartilhados
 
@@ -82,18 +62,6 @@ As chaves agrupam subpastas existentes, não diretórios literais. A grafia real
 Em `shared/infrastructure/database/`, `base.py` define a base declarativa, `engine.py` configura engine e fábrica de sessões, `session.py` disponibiliza uma dependência de sessão e `integrity_errors.py` interpreta conflitos. As dependências HTTP dos módulos também abrem sessões com a fábrica compartilhada. Não existe uma sessão global única para todas as requisições.
 
 `shared/infrastructure/logging/` centraliza o logger. `shared/infrastructure/security/` reúne rotas de autenticação, schemas, dependências de autorização, serviço, tokens, hashes e acesso às credenciais persistidas em `users`.
-
-## Como as camadas se conectam
-
-Uma chamada de cadastro de usuário percorre o seguinte fluxo:
-
-1. FastAPI recebe `POST /users`, aplica a exigência de administrador e valida a entrada com Pydantic.
-2. As dependências HTTP obtêm o repositório e o cliente HTTP; `bootstrap/users.py` monta os casos de uso com `AddressService` e `ViaCepClient`.
-3. `CreateUserUseCase` resolve o endereço, gera o hash da senha, constrói `User` e chama a porta de persistência.
-4. `SQLAlchemyUserRepository` transforma a entidade em `UserModel` e salva por uma sessão SQLAlchemy no PostgreSQL.
-5. O resultado retorna ao router e é serializado pelo schema de resposta.
-
-A direção de execução vai da rota ao banco; a abstração de persistência é declarada na camada de aplicação e implementada na infraestrutura. Essa distinção permite substituir repositórios em testes por meio de `create_app(...)` ou das dependências FastAPI.
 
 ## C4 — Nível 1: contexto
 

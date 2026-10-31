@@ -8,7 +8,7 @@
 @technicalId = 2
 @clientId = 1
 @vehicleId = 1
-@toolId = MEC-2026-002
+@toolId = 03AB35-6868
 # O POST não retorna budget_id. Liste os orçamentos e ajuste budgetId.
 @budgetId = 1
 @offset = 0
