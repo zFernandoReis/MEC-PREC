@@ -10,7 +10,7 @@
 @vehicleId = 10
 @toolId = 03AB35-6868
 # O POST não retorna budget_id. Liste os orçamentos e ajuste budgetId.
-@budgetId = 1
+@budgetId={{createBudget.response.body.$.budget_id}}
 @offset = 0
 @limit = 100
 
@@ -55,6 +55,8 @@ GET {{baseUrl}}/budgets?offset={{offset}}&limit={{limit}}
 Authorization: Bearer {{token}}
 
 ### Consultar por ID
+
+
 GET {{baseUrl}}/budgets/{{budgetId}}
 Authorization: Bearer {{token}}
 
