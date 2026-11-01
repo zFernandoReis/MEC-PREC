@@ -1,5 +1,4 @@
 # REST Client (VS Code). Execute o login antes das demais requisições.
-# Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
 @baseUrl = http://localhost:8000
 @cpf = 00000000353
 @password = oYZkpmjJ1LLVu32GEXETXx5g
@@ -8,6 +7,7 @@
 @renewedToken = {{refresh.response.body.$.access_token}}
 @renewedRefreshToken = {{refresh.response.body.$.refresh_token}}
 @newPassword = ANA123243Esc!
+@NewTokenPassword = {{ReLogin.response.body.$.access_token}}
 
 ### Login
 # @name login
@@ -40,7 +40,7 @@ Authorization: Bearer {{renewedToken}}
 # Execute após um novo login, sem executar refresh entre login e esta requisição.
 # Depois da alteração, atualize MEC_HTTP_PASSWORD e faça login novamente.
 POST {{baseUrl}}/auth/change-password
-Authorization: Bearer {{token}}
+Authorization: Bearer {{renewedToken}}
 Content-Type: application/json
 
 {
@@ -48,7 +48,20 @@ Content-Type: application/json
   "new_password": "{{newPassword}}"
 }
 
+
+
+### ReLogin
+# @name ReLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{newPassword}}"
+}
+
 ### Encerrar sessão (204)
+
 # Execute após um novo login. Se acabou de renovar, use renewedToken no cabeçalho.
 POST {{baseUrl}}/auth/logout
-Authorization: Bearer {{token}}
+Authorization: Bearer {{NewTokenPassword}}

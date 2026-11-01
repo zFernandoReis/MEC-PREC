@@ -1,505 +1,266 @@
 # MEC System
 
-## Docker Compose
+## 1. Objetivo do projeto
 
-Copie `.env.example` para `.env`, defina `POSTGRES_PASSWORD` e um
-`JWT_SECRET_KEY` aleatório de pelo menos 32 caracteres, e execute:
+Centralizar o atendimento e a execução de serviços de uma oficina mecânica, reduzindo a dependência de anotações e planilhas dispersas. O MEC System organiza clientes, veículos, estoque, orçamentos e ordens de serviço para facilitar o acompanhamento dos reparos, dos prazos e das aprovações.
+
+## 2. Descrição resumida da solução
+
+O projeto entrega uma API HTTP/JSON com autenticação e controle de acesso por perfil. A equipe da oficina pode administrar cadastros, elaborar orçamentos e conduzir ordens de serviço; clientes autenticados podem consultar e aprovar suas próprias ordens.
+
+O fluxo de uma ordem de serviço é:
+
+```text
+recebida → em_diagnostico → aguardando_aprovacao → em_execucao → finalizada → entregue
+```
+
+As transições registram histórico e verificam permissões, versão e pré-condições. A aprovação é registrada separadamente do início da execução. Jobs gravam notificações de prazos próximos e atrasos no banco, sem envio de e-mails. A implementação atual é um backend; a interação pode ser feita pelo Swagger ou por clientes HTTP.
+
+## 3. Arquitetura utilizada
+
+A aplicação é um **monólito modular**, organizado em camadas e contratos de persistência. Os módulos compartilham a aplicação FastAPI e o banco PostgreSQL:
+
+| Módulo | Responsabilidades |
+| --- | --- |
+| `users` | Usuários, endereços e veículos. |
+| `quotes` | Orçamentos e estoque. |
+| `orders` | Ordens de serviço, workflow, histórico e notificações. |
+
+Cada módulo separa `domain` (entidades e regras), `application` (casos de uso, DTOs e contratos) e `infrastructure` (rotas HTTP, modelos e repositórios). `bootstrap` conecta as implementações e oferece comandos operacionais. `shared/infrastructure` concentra banco, logging e segurança.
+
+```text
+Cliente HTTP → FastAPI → Casos de uso → Repositórios → PostgreSQL
+                              ↓
+                        Regras de domínio
+
+API → ViaCEP (consulta de endereços)
+Scheduler → Jobs de notificações → PostgreSQL
+```
+
+O Docker Compose executa três serviços: `app`, `postgres` e `scheduler`. API e scheduler usam a mesma imagem; o scheduler roda em processo separado e inicia ciclos a cada 30 segundos, sem sobreposição. O banco usa volume persistente. As requisições utilizam sessões próprias de banco.
+
+Detalhes das camadas e diagramas estão na [documentação de arquitetura](docs/03-arquitetura.md), e os relacionamentos no [modelo de dados](docs/04-modelo-de-dados.md).
+
+## 4. Tecnologias utilizadas
+
+| Tecnologia | Utilização |
+| --- | --- |
+| Python 3.12+ | Linguagem da API, casos de uso, jobs e scripts; Docker usa 3.12. |
+| FastAPI e Pydantic | Rotas HTTP, validação, dependências e contratos da API. |
+| Uvicorn | Servidor ASGI da aplicação. |
+| PostgreSQL 16 | Persistência relacional; versão utilizada pelo Compose. |
+| SQLAlchemy, asyncpg e psycopg | ORM e drivers de acesso ao PostgreSQL. |
+| HTTPX | Comunicação HTTP e integração com ViaCEP. |
+| PyJWT e pwdlib/Argon2id | Tokens JWT e hash de senhas. |
+| pydantic-settings | Carregamento e validação das configurações. |
+| pytest e pytest-asyncio | Testes unitários e de integração, incluindo código assíncrono. |
+| uv | Gerenciamento do ambiente, dependências e execução de comandos. |
+| Docker e Docker Compose | Construção da imagem e execução dos serviços. |
+| OpenAPI, Swagger UI e ReDoc | Documentação e exploração da API. |
+
+As dependências estão declaradas em [pyproject.toml](pyproject.toml), com versões resolvidas em [uv.lock](uv.lock).
+
+## 5. Pré-requisitos
+
+**Para executar com Docker:**
+
+- Docker com suporte a containers Linux e Docker Compose v2, com o serviço Docker ativo.
+- Acesso à internet para obter imagens/dependências e consultar o ViaCEP na carga inicial.
+- Portas 8000 (API) e 5432 (banco) disponíveis, ou portas alternativas no `.env`.
+
+**Para executar localmente:**
+
+- Python 3.12 ou superior e `uv` disponíveis no terminal.
+- PostgreSQL disponível, com banco criado e credenciais configuradas.
+- Permissão para criar tabelas e, nos testes integrados, criar e remover schemas temporários.
+- Acesso ao ViaCEP para cadastrar endereços e executar a carga inicial.
+
+Os comandos abaixo usam PowerShell e devem ser executados na raiz do projeto. Para configuração, copie `.env.example` para `.env`, sem substituir um arquivo já configurado. Defina `POSTGRES_PASSWORD` e um `JWT_SECRET_KEY` aleatório com pelo menos 32 caracteres. Na execução local, configure também `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER` e `POSTGRES_DB`.
+
+## 6. Instruções para execução
+
+### Com Docker Compose
+
+Na primeira configuração:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Edite o `.env` conforme os pré-requisitos. Se houver usuários sem `password` em `dados/users.json`, configure `MEC_INITIAL_PASSWORD` com 12 a 128 caracteres. Senhas explícitas nos registros são preservadas.
 
 ```powershell
 docker compose up -d --build
-```
-
-O Compose inicia três serviços:
-
-- `postgres`: PostgreSQL 16 com volume persistente `postgres_data`, publicado
-  em `localhost:5432`. Use as credenciais `POSTGRES_USER`, `POSTGRES_PASSWORD`
-  e `POSTGRES_DB` do `.env`. `POSTGRES_EXTERNAL_PORT` altera a porta no host;
-  a comunicação entre containers continua em `postgres:5432`.
-- `app`: API em `http://localhost:8000/docs`. Espera o banco ficar saudável,
-  cria tabelas ausentes e aplica as migrações de `notification_type` e do workflow de OS antes de
-  executar todos os testes em `tests` (unitários e integração), mostrando o
-  resultado no log. Após aprovação, importa `dados` e inicia o Uvicorn.
-  Falha na preparação, testes ou carga impede a API de iniciar.
-- `scheduler`: espera a API ficar saudável, executa os dois jobs imediatamente
-  e repete a cada 30 segundos, em um único processo e sem sobrepor ciclos.
-  Cada job usa sua própria sessão; falha em um não impede a execução do outro.
-
-O intervalo é contado a partir do início de cada ciclo. Se um ciclo ultrapassar
-30 segundos, o próximo começa quando ele terminar. Não há reposição dos ciclos
-perdidos enquanto os containers estiverem parados. O scheduler roda enquanto
-seu container estiver ativo; a dependência da API é verificada na inicialização.
-
-O agendamento fica em `src/app/bootstrap/notification_scheduler.py`, na função
-`run`: `delay = max(0, 30 - (loop.time() - started))`. Os 30 segundos definem
-o intervalo entre os inícios dos ciclos. O serviço `scheduler` do
-`docker-compose.yml` inicia esse módulo.
-
-Os serviços usam `restart: unless-stopped`: voltam após reiniciar o Docker,
-desde que não tenham sido parados manualmente. O Docker precisa estar ativo
-no servidor. A API e o scheduler usam a mesma imagem, com dependências de
-instaladas a partir de `uv.lock`, incluindo pytest para a validação de startup.
-Os arquivos de `tests` e `dados` são incluídos na imagem; o `.env` não é copiado.
-
-A carga inicial importa somente `dados/users.json`, pelas rotas internas da aplicação. Consulta o ViaCEP e precisa de acesso à internet. As senhas vêm do JSON; para registros sem senha, configure `MEC_INITIAL_PASSWORD` no `.env`. Nenhuma senha é registrada no log. Os demais recursos podem ser importados pelo importador HTTP manual.
-
-Toda a carga ocorre em uma transação. Em falha, os dados da tentativa são
-revertidos. Ao concluir, grava `initial_dados_v1` em `bootstrap_ingestions`,
-no mesmo banco. Nos próximos reinícios executa os testes novamente e pula a
-carga já concluída. Alterações posteriores nos JSONs não são reimportadas
-automaticamente. Registros existentes que conflitem com os arquivos fazem a
-carga falhar, sem sobrescrevê-los. Os testes atuais de integração verificam a
-conexão PostgreSQL; novos testes que alterem dados devem usar banco isolado.
-O healthcheck concede até cinco minutos de preparação antes de contabilizar
-falhas, para acomodar os testes e as consultas de CEP.
-
-`TZ` define a data local dos jobs (padrão: `America/Sao_Paulo`). Configure
-`APP_PORT`, `NOTIFICATION_DAYS_BEFORE` e `NOTIFICATION_BATCH_SIZE` no `.env`
-se necessário. Dentro dos containers, o banco sempre é `postgres:5432`.
-O volume criado é um banco separado do PostgreSQL instalado no host.
-As credenciais `POSTGRES_*` inicializam o volume na primeira execução;
-alterá-las no `.env` não altera usuários de um volume já existente.
-Se alterar `POSTGRES_PASSWORD` com o volume já inicializado, recrie o container
-do banco para receber o novo ambiente e sincronize a senha sem apagar dados:
-
-```powershell
-docker compose up -d postgres
-powershell -ExecutionPolicy Bypass -File scripts/sync_postgres_credentials.ps1
-docker compose up -d --wait --wait-timeout 600
-```
-
-O script exige acesso administrativo local ao container e mantém o usuário
-`POSTGRES_USER` existente. O healthcheck agora executa uma consulta autenticada:
-senha incorreta ou banco ausente impedem a inicialização da API. A mensagem
-`password authentication failed` é uma falha de conexão ao iniciar, mesmo
-quando a construção da imagem terminou com sucesso.
-O bootstrap não executa migrações de outros esquemas legados.
-
-Para acompanhar e encerrar:
-
-```powershell
 docker compose logs -f app scheduler
+```
+
+A API fica disponível em `http://localhost:8000` após o startup concluir. O processo cria tabelas ausentes, aplica as migrações de notificações e workflow, executa os testes, importa os usuários iniciais e inicia o Uvicorn. Uma falha nessas etapas impede a API de iniciar.
+
+A carga inicial importa somente `dados/users.json`, consulta o ViaCEP e é transacional. O marcador `initial_dados_v1` impede repetir a carga em reinícios; mudanças posteriores no JSON não atualizam registros já importados. Os demais recursos têm importação manual descrita no [guia operacional](docs/06-guia-operacional.md).
+
+`APP_PORT` altera a porta da API no host; `POSTGRES_EXTERNAL_PORT` altera a porta do banco no host. Dentro dos containers, o banco permanece em `postgres:5432`. `TZ` usa `America/Sao_Paulo` por padrão.
+
+Para encerrar, preservando o banco:
+
+```powershell
 docker compose down
 ```
 
-`down` preserva o banco. `docker compose down -v` remove o volume e todos
-os dados. Após alterar o código, execute novamente `up -d --build`.
+`docker compose down -v` também apaga o volume e seus dados. Após alterar código, repita `docker compose up -d --build`. Alterar credenciais no `.env` não altera usuários de um volume PostgreSQL existente; consulte a sincronização de credenciais no [guia operacional](docs/06-guia-operacional.md).
 
-## Job de notificações de prazo
+### Execução local
 
-Crie as tabelas com `uv run python -m app.bootstrap.create_tables` e execute:
-
-```powershell
-uv run python -m app.bootstrap.notify_upcoming_orders
-```
-
-O job consulta `orders` em lotes de 100 e cria registros em `notifications`
-para ordens com `service_date_end` entre `date.today()` e os próximos 3 dias,
-incluindo os dois limites. Usa a data local do processo; configure o servidor
-com o fuso horário desejado. Ignora prazos nulos, vencidos e ordens finalizadas
-ou entregues. O nome do cliente vem de `users`; os demais dados são copiados
-da ordem. Uma ordem com o mesmo prazo e tipo já notificado não gera outro aviso.
-Se o prazo mudar, pode gerar uma nova notificação para a nova data.
-
-Para manter um processo independente verificando a cada hora:
+Com Python, uv, banco e `.env` preparados:
 
 ```powershell
-uv run python -m app.bootstrap.notify_upcoming_orders --days-before 3 --interval-seconds 3600
+uv sync --frozen
 ```
 
-Sem `--interval-seconds`, executa uma vez e encerra, permitindo agendamento
-externo. `--days-before 0` verifica apenas os prazos de hoje e `--batch-size`
-ajusta o tamanho dos lotes. Cada lote é confirmado em uma transação; em falha,
-o lote atual é revertido e os anteriores são preservados. Em modo contínuo,
-registra o erro e tenta novamente no próximo intervalo. No PostgreSQL, bloqueia
-as ordens do lote com `FOR UPDATE SKIP LOCKED` para coordenar instâncias deste
-job. Não cria rotas HTTP nem envia e-mails.
-
-## Job de notificações de atraso
-
-O segundo job cria notificações do tipo `overdue` quando
-`service_date_end < date.today()` e `order_status == em_execucao`.
-Prazos de hoje, futuros ou nulos e os demais status são ignorados.
-O aviso de atraso é independente do aviso `upcoming`: uma ordem pode receber
-ambos, mas cada tipo é criado apenas uma vez por ordem e data de término.
-Alterar o prazo permite um novo aviso quando a nova data estiver vencida.
-
-Para banco existente, antes de executar qualquer um dos dois jobs atualizados:
+Para gerar o segredo JWT, copie a saída deste comando para `JWT_SECRET_KEY` no `.env`:
 
 ```powershell
-uv run python -m app.bootstrap.migrate_notification_type
+uv run python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-A migração pode ser repetida e classifica os avisos existentes como `upcoming`.
-Para banco novo, use `app.bootstrap.create_tables`.
-
-Execução única:
+Prepare o banco e carregue os usuários de demonstração:
 
 ```powershell
-uv run python -m app.bootstrap.notify_overdue_orders
+uv run --env-file .env python -m app.bootstrap.create_tables
+uv run --env-file .env python -m app.bootstrap.migrate_notification_type
+uv run --env-file .env python -m app.bootstrap.migrate_order_workflow
+$env:MEC_DATA_DIR = (Resolve-Path dados).Path
+uv run --env-file .env python -m app.bootstrap.seed_initial_data
+uv run --env-file .env uvicorn app.main:app --app-dir src --reload
 ```
 
-Execução contínua, a cada hora:
+A API fica disponível em `http://127.0.0.1:8000`. O comando local do Uvicorn não executa os testes nem inicia o scheduler automaticamente. `create_tables` cria tabelas ausentes; não migra colunas de tabelas existentes. As migrações listadas tratam apenas notificações e workflow, e devem ser executadas com API e jobs parados.
+
+Para executar os jobs uma vez, em outro terminal:
 
 ```powershell
-uv run python -m app.bootstrap.notify_overdue_orders --interval-seconds 3600
+uv run --env-file .env python -m app.bootstrap.notify_upcoming_orders
+uv run --env-file .env python -m app.bootstrap.notify_overdue_orders
 ```
 
-Também aceita `--batch-size` (padrão: 100) e usa a data local do processo.
-Segue as mesmas regras de transação, rollback e repetição em falha do job de
-prazo próximo. Execute os jobs como processos independentes da API.
+Para execução contínua no Windows, cada job aceita `--interval-seconds 30`, em terminais separados. O Compose já mantém o scheduler ativo.
 
-## Autenticação JWT
+## 7. Instruções para execução dos testes
 
-A implementação fica em `src/app/shared/infrastructure/security`, integrada ao
-usuário existente em `modules/users`. O login usa **CPF com 11 dígitos e senha**,
-pois o CPF já é único e o e-mail atualmente permite duplicidade. Nenhum usuário
-é criado pelo login. O cadastro em `POST /users` exige `password` (12 a 128
-caracteres) e calcula o hash Argon2id antes de salvar em `users.password_hash`.
-O modelo `User` contém apenas o hash, omitido no repr e nos DTOs de resposta.
-`users.token_version` permite revogar as sessões. Não há tabela separada de senhas.
-
-### Preparação
-
-1. Execute `uv sync` e configure as variáveis de banco no `.env` (veja `.env.example`).
-2. Gere um segredo com `uv run python -c "import secrets; print(secrets.token_urlsafe(48))"`
-   e salve o resultado em `JWT_SECRET_KEY` no `.env`. Use o mesmo segredo em todas
-   as instâncias; são exigidos pelo menos 32 caracteres. Sem configuração, a
-   emissão/validação de tokens retorna 503, sem usar uma chave padrão.
-3. Execute `uv run --env-file .env python -m app.bootstrap.create_tables`.
-   Para banco **já existente**, pare a API e execute também:
-
-   ```powershell
-   uv run --env-file .env python -m app.bootstrap.migrate_user_passwords
-   ```
-
-   Essa migração adiciona `password_hash` e `token_version` à tabela `users`.
-   Caso exista a antiga `user_credentials`, transfere os hashes e versões antes
-   de removê-la. Preserva hashes já definidos em `users` e pode ser repetida.
-   Registros legados sem senha continuam com hash nulo e não podem fazer login.
-   `create_tables` sozinho não altera colunas de uma tabela já existente.
-4. Para usuários antigos sem senha, ou para redefinição administrativa:
-
-   ```powershell
-   uv run --env-file .env python -m app.shared.infrastructure.security.set_password --cpf 52998224725
-   ```
-
-   O comando solicita a senha e a confirmação sem exibi-las nem recebê-las em
-   argumentos. Exige de 12 a 128 caracteres e também permite redefinição
-   administrativa, revogando as sessões anteriores. Ele não altera o papel do
-   usuário. Para administrar usuários pela API, use uma conta já cadastrada
-   com `role=admin`. Não há cadastro público nem redefinição pública por CPF.
-5. Inicie a API com `uv run uvicorn app.main:app --app-dir src --reload`.
-
-### Rotas
-
-| Método | Rota | Corpo JSON / comportamento |
-| --- | --- | --- |
-| POST | `/auth/login` | `{"cpf":"52998224725","password":"sua-senha-segura"}`; retorna access e refresh token |
-| POST | `/auth/refresh` | `{"refresh_token":"..."}`; consome o refresh e emite um novo par |
-| GET | `/auth/me` | Retorna o usuário do access token atual |
-| POST | `/auth/change-password` | `{"current_password":"...","new_password":"..."}`; exige access token e senha atual; retorna 204 |
-| POST | `/auth/logout` | Exige access token; revoga a sessão e retorna 204 |
-
-Envie `Authorization: Bearer <access_token>` nas rotas protegidas. No Swagger,
-use **Authorize** e cole o access token retornado pelo login.
-Todas as rotas de usuários exigem administrador, inclusive criação e mudança
-de papel. As rotas de veículos, estoque e orçamentos exigem usuário autenticado;
-esses três recursos ainda não têm restrição por proprietário.
-
-Nas ordens de serviço, usuários com papel `client` podem consultar e aprovar suas
-próprias OS. `GET /orders` filtra pelo ID do usuário autenticado antes de aplicar
-a paginação; parâmetros enviados pelo cliente não alteram esse proprietário.
-`GET /orders/{order_id}` retorna 404 tanto para uma OS alheia quanto inexistente.
-O POST de criação, PATCH e DELETE de ordens retornam 403 para clientes, inclusive nas próprias
-OS. Os papéis internos `admin`, `manager`, `technical` e `financial` mantêm acesso
-à consulta de todas as ordens, criação e edição antes da solicitação de aprovação.
-Exclusão física é bloqueada com 409 para preservar auditoria. As ações do workflow
-têm permissões específicas descritas abaixo.
-Sem autenticação, as rotas de ordens retornam 401.
-
-### CRUD de ordens de serviço
-
-| Método | Rota | Resultado |
-| --- | --- | --- |
-| POST | `/orders` | Cria uma OS em `recebida`, versão 1 (201) |
-| GET | `/orders?offset=0&limit=100` | Lista OS com paginação e escopo do usuário |
-| GET | `/orders/{order_id}` | Consulta uma OS (200) |
-| PATCH | `/orders/{order_id}` | Atualiza somente os campos enviados (200) |
-| DELETE | `/orders/{order_id}` | Bloqueia exclusão de OS existente (409) |
-
-O PATCH aceita, por exemplo, `{"service_name":"Alinhamento"}`. Campos omitidos
-mantêm seu valor. `service_description` e `duration_service_days` aceitam `null`
-para limpar o campo; os demais campos não aceitam `null` explícito. Identificadores
-gerados pelo sistema não podem ser alterados no corpo da requisição. Consulta,
-atualização e exclusão de OS inexistente retornam 404. Conflitos de integridade
-do banco retornam 409. As restrições de autorização descritas acima se aplicam
-a todas essas operações. Exemplos executáveis estão em [http/orders.http](http/orders.http).
-
-### Transições de ordens de serviço
-
-Fluxo: `recebida → em_diagnostico → aguardando_aprovacao → em_execucao → finalizada → entregue`.
-O status não é aceito no POST de criação nem no PATCH (422). O PATCH é permitido
-somente em recebida/diagnóstico e incrementa a versão. A aprovação é uma ação
-separada que mantém `aguardando_aprovacao` até o início real da execução.
-
-Todos os comandos abaixo recebem `expected_version` inteiro positivo, obtido
-na última consulta/resposta. Retornam 200 com a OS e sua nova versão. Versão
-desatualizada, repetição, salto de etapa e pré-condição não atendida retornam 409.
-Corpo inválido retorna 422, ausência de JWT 401 e falta de permissão 403.
-Cliente consultando ou tentando agir em OS alheia recebe 404.
-
-| Método | Rota sob `/orders/{order_id}` | Campos adicionais |
-| --- | --- | --- |
-| POST | `/start-diagnosis` | Nenhum |
-| POST | `/request-approval` | `diagnosis` obrigatório |
-| POST | `/approve` | `evidence` obrigatório para admin/manager; opcional para o próprio cliente |
-| POST | `/start-execution` | Nenhum; exige aprovação registrada |
-| POST | `/finish` | `service_report` obrigatório |
-| POST | `/deliver` | `received_by` obrigatório |
-| GET | `/allowed-actions` | Status, versão e ações elegíveis por estado/perfil; pré-condições são revalidadas nos comandos |
-| GET | `/history?offset=0&limit=100` | Histórico ordenado por versão; cliente recebe representação sem detalhes internos |
-
-Admin/manager operam todas as ações, respeitando as mesmas transições. Técnicos
-operam diagnóstico, solicitação, execução e finalização somente quando seu ID
-é o `technical_responser_id`. Cliente aprova apenas sua OS. Financial consulta,
-mas não executa comandos do workflow. A entrega é feita por admin/manager.
-
-Solicitar aprovação armazena uma cópia dos termos do orçamento em
-`budget_snapshot` e bloqueia sua edição/exclusão em `quotes`. Aprovar não significa
-iniciar o serviço. O autor vem do JWT, e a aprovação externa registra evidência
-e o cliente ao qual o consentimento se refere. Não há reabertura, cancelamento
-ou revisão de orçamento congelado nesta versão.
-
-Estado, versão e evento são confirmados na mesma transação. A OS e o orçamento
-são bloqueados durante validação/gravação; uma atualização condicional por versão
-também protege contra PATCH desatualizado. Falha ao gravar histórico reverte a ação.
-Datas reais ficam em `execution_started_at`, `finished_at` e `delivered_at`, sem
-substituir `service_date_end`, usado como prazo planejado pelos jobs. Na criação,
-horas são convertidas em dias corridos com arredondamento para cima.
-
-Para banco existente, com a API e o scheduler parados, execute antes de reiniciar:
+Com dependências instaladas e `.env` configurado, execute toda a suíte:
 
 ```powershell
-uv run python -m app.bootstrap.migrate_order_workflow
+uv run --env-file .env pytest tests -q
 ```
 
-O startup Docker já executa essa migração. Ela é aditiva e repetível: preserva
-status existentes e não inventa autor, aprovação ou eventos antigos. OS legadas
-aguardando aprovação recebem uma cópia dos termos atuais e precisam de nova
-aprovação explícita. Orçamentos de OS aguardando aprovação, em execução,
-finalizadas ou entregues ficam congelados. OS legadas com vínculos incoerentes
-precisam de correção administrativa dos dados antes de avançar.
-
-Roteiro manual completo, incluindo erros esperados:
-[http/orders-workflow.http](http/orders-workflow.http).
+Para executar por categoria:
 
 ```powershell
-uv run pytest tests -q
-uv run pytest tests/integration/test_orders_workflow.py -q
+uv run --env-file .env pytest tests/unit -q
+uv run --env-file .env pytest tests/integration -q
 ```
 
-Os testes integrados usam JWT, HTTP e repositórios reais. Exigem PostgreSQL
-configurado e permissão para criar schemas; cada cenário cria e remove apenas
-seu schema `test_orders_<uuid>`, sem modificar tabelas da aplicação. Cobrem os oito
-endpoints, autorização, concorrência, rollback, bloqueio de orçamento e migração.
+Os testes unitários usam substitutos de dependências e, em cenários de segurança, SQLite isolado. A configuração de ambiente ainda é necessária para importar a aplicação. Os testes integrados exigem PostgreSQL acessível; verificam a conexão e o workflow com HTTP, JWT e repositórios reais. Os cenários de workflow criam e removem schemas `test_orders_<uuid>`, exigindo permissão no banco configurado.
 
-Exemplo no PowerShell (a senha fica oculta durante a digitação):
+Com o serviço `app` em execução, também é possível executar a suíte dentro do container:
 
 ```powershell
-$credential = Get-Credential -UserName "52998224725" -Message "Login MEC: CPF e senha"
-$body = @{ cpf = $credential.UserName; password = $credential.GetNetworkCredential().Password } | ConvertTo-Json
-$tokens = Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/auth/login -ContentType application/json -Body $body
-$headers = @{ Authorization = "Bearer $($tokens.access_token)" }
-Invoke-RestMethod -Uri http://127.0.0.1:8000/auth/me -Headers $headers
+docker compose exec app python -m pytest tests -q -p no:cacheprovider
 ```
 
-O access token expira em 15 minutos e o refresh em 7 dias, configuráveis com
-`JWT_ACCESS_TOKEN_MINUTES` (1–60) e `JWT_REFRESH_TOKEN_DAYS` (1–30).
-Os tokens usam HS256, issuer (`JWT_ISSUER`), audience (`JWT_AUDIENCE`), subject,
-expiração, tipo, identificador aleatório e versão de sessão. A validação
-consulta o usuário e a credencial persistidos, permitindo revogação imediata.
-Access e refresh não são intercambiáveis.
+O startup Docker executa a suíte automaticamente antes de disponibilizar a API. O resultado aparece em `docker compose logs app`.
 
-Há **uma sessão ativa por usuário**: novo login e refresh invalidam o par
-anterior; o refresh só pode ser consumido uma vez, inclusive em concorrência.
-Logout e mudança/redefinição de senha invalidam todos os tokens anteriores.
-Após mudar a senha, faça login novamente. Credenciais incorretas e tokens
-inválidos retornam 401; falta de permissão retorna 403; entrada inválida retorna
-422. Respostas de validação de autenticação não repetem senhas/tokens recebidos.
-Use HTTPS fora do ambiente local. A API não implementa entrega de e-mails de
-recuperação nem limitação de tentativas; configure esta última no gateway de
-produção. Referência das bibliotecas:
-[FastAPI: JWT e Argon2](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/).
+## 8. Instruções para acesso ao Swagger ou documentação da API
 
-Execute `uv run pytest tests/unit/test_security.py -q` para validar o fluxo com
-os repositórios reais em SQLite isolado, sem consultar o PostgreSQL configurado.
+Com a aplicação iniciada e usando a porta padrão:
 
-## Ingestão dos arquivos JSON pela API
+| Interface | Endereço |
+| --- | --- |
+| Swagger UI | [http://localhost:8000/docs](http://localhost:8000/docs) |
+| ReDoc | [http://localhost:8000/redoc](http://localhost:8000/redoc) |
+| Schema OpenAPI | [http://localhost:8000/openapi.json](http://localhost:8000/openapi.json) |
 
-Com a API em execução, importe os arquivos de `dados/`:
+Se alterar `APP_PORT`, ajuste a porta dos endereços. No Swagger, execute `POST /auth/login`, copie o `access_token`, clique em **Authorize** e cole o token para acessar rotas protegidas.
+
+Exemplos de requisições estão em [http/](http/), com instruções em [http/README.md](http/README.md). Os contratos e detalhes de operação também estão no [guia operacional](docs/06-guia-operacional.md).
+
+## 9. Decisão e justificativa do banco de dados escolhido
+
+O banco escolhido é o **PostgreSQL**, na versão 16 do ambiente Docker, por ser **open source e amplamente utilizado no mercado**. Essas características permitem utilizar uma solução consolidada, com uma comunidade ativa e ampla disponibilidade de conhecimento e profissionais.
+
+O modelo relacional, com uso de SQL, atende plenamente às necessidades da proposta: organizar usuários, veículos, orçamentos e ordens de serviço e manter a integridade dos relacionamentos entre esses registros. Chaves primárias e estrangeiras, restrições de unicidade e transações ajudam a garantir a consistência dos dados nas operações da oficina.
+
+Consulte o [modelo de dados](docs/04-modelo-de-dados.md) para os relacionamentos e as limitações de integridade dos campos JSON. O volume `postgres_data` preserva os dados entre recriações dos containers. O SQLite utilizado em testes isolados não substitui o banco da aplicação.
+
+## 10. Usuários, credenciais de demonstração ou procedimento de autenticação
+
+A autenticação usa **CPF com 11 dígitos e senha**. A carga inicial cria os usuários de [dados/users.json](dados/users.json); consulte nesse arquivo o CPF e o perfil da conta desejada. A senha inicial corresponde ao campo `password` do registro ou, quando ausente, ao valor de `MEC_INITIAL_PASSWORD` usado na carga. Alterar o JSON ou essa variável após a carga não redefine senhas existentes.
+
+Para administrar usuários, escolha uma conta com `role=admin`. Não há cadastro público, e o login não cria usuários. Para redefinir a senha de um usuário existente localmente:
 
 ```powershell
-uv run python -m app.bootstrap.ingest_json --dry-run
-$env:MEC_ACCESS_TOKEN = $tokens.access_token # obtido no login de um administrador
-uv run python -m app.bootstrap.ingest_json --base-url http://127.0.0.1:8000
+uv run --env-file .env python -m app.shared.infrastructure.security.set_password --cpf <CPF_DO_USUARIO>
 ```
 
-Os usuários importados também precisam de `password`. Para os arquivos de
-amostra, que não contêm senhas, defina `MEC_INITIAL_PASSWORD` com uma senha de
-12 a 128 caracteres antes da validação/importação. Ela será aplicada apenas a
-registros sem o campo `password`; senhas explícitas são preservadas. Use esse
-recurso para amostras locais. A senha é enviada no corpo HTTP e transformada
-em hash pela API; não é impressa nos logs nem gravada nos JSONs pelo script.
-
-O script valida todos os arquivos selecionados antes do primeiro envio e faz
-um POST por registro: `users.json` → `/users`, `stock.json` → `/stock`,
-`vehicles.json` → `/vehicles` e `budgets.json` → `/budgets`, nessa ordem.
-Não acessa o banco diretamente. Aceita `--data-dir`, `--timeout` e seleção:
+No Docker:
 
 ```powershell
-uv run python -m app.bootstrap.ingest_json --resources users
-uv run python -m app.bootstrap.ingest_json --data-dir ./dados --resources stock vehicles
+docker compose exec app python -m app.shared.infrastructure.security.set_password --cpf <CPF_DO_USUARIO>
 ```
 
-Quando usuários e veículos são importados juntos, `owner_id`, `technical_id`
-e `client_id` nos arquivos representam a posição do usuário em `users.json`,
-começando em 1. O script substitui essas referências pelos IDs retornados pela
-API. Da mesma forma, se veículos e orçamentos forem selecionados juntos,
-`vehicle_id` representa a posição em `vehicles.json` e é substituído pelo ID
-criado. Quando o arquivo referenciado não é selecionado, informe os IDs reais
-já existentes no banco. A ordem dos arquivos não deve ser alterada sem ajustar
-essas referências.
+Substitua `<CPF_DO_USUARIO>` pelo CPF real da amostra. O comando solicita e confirma uma senha de 12 a 128 caracteres sem exibi-la, revoga sessões anteriores e preserva o perfil.
 
-Os arquivos devem seguir os DTOs de criação da API. Nos dados de exemplo,
-os CPFs fictícios possuem dígitos verificadores calculados para passar pela
-validação de domínio da API.
-Os 50 endereços da amostra usam 25 CEPs distintos de 24 UFs, cobrindo as
-cinco regiões do Brasil, confirmados no ViaCEP em 21/10/2026. Cada CEP aparece
-em dois usuários; número e complemento foram preservados como dados fictícios.
-`duration_service_days` e `replacement_time_days` foram arredondados para cima
-para representar dias inteiros; os valores exatos em horas foram preservados.
-`engine_capacity` está em cm³ inteiros (por exemplo, 1,6 L → 1600 cm³).
-Os tipos `carro`, `suv` e `picape` foram classificados como `car`, conforme
-o enum atual, e `gasolina` foi convertido em `gasoline`. Os demais combustíveis
-aceitos são `ethanol`, `flex`, `diesel`, `electric` e `hybrid`.
-Nos orçamentos de exemplo, `vehicle_id` distribui os serviços entre os veículos
-do respectivo cliente, seguindo a ordem de `vehicles.json` e reiniciando a
-distribuição quando os veículos desse cliente se esgotam.
-O script não arredonda nem inventa relações entre dados durante a ingestão.
-O `--dry-run` valida o formato local, sem consultar o servidor; regras de
-domínio, CEP, conflitos e referências no banco são verificadas pela API.
+Faça login pelo Swagger ou envie:
 
-Em erro de validação, nenhum registro é enviado. Em erro HTTP, o script para
-e sai com código 1; os POSTs anteriores permanecem gravados. Não há repetição
-automática nem deduplicação: confira a API antes de executar novamente,
-especialmente após timeout, pois o último POST pode ter sido persistido.
+```http
+POST /auth/login
+Content-Type: application/json
 
-## Logging compartilhado
-
-Use o mesmo objeto em todos os módulos:
-
-```python
-from app.shared.infrastructure.logging import logger
-
-logger.debug("Processando item de estoque: tool_id=%s", tool_id)
+{"cpf":"<CPF_DO_USUARIO>","password":"<SENHA_CONFIGURADA>"}
 ```
 
-A saída inclui data/hora, nível, nome do arquivo, método/função, número da
-linha da chamada e o comentário informado. O contexto é capturado automaticamente.
-Também estão disponíveis `info`, `warning`, `error`, `critical` e `exception`
-(este último inclui o traceback quando usado dentro de um `except`).
+A resposta contém `access_token` e `refresh_token`. Envie `Authorization: Bearer <access_token>` nas rotas protegidas. Consulte `GET /auth/me` para verificar a identidade autenticada.
 
-A API configura o console em `create_app`. O nível padrão da aplicação é
-`DEBUG`; configure `LOG_LEVEL=INFO` no `.env` para ocultar os detalhes de
-depuração. Os níveis aceitos são `DEBUG`, `INFO`, `WARNING`, `ERROR` e `CRITICAL`.
-Os casos de uso de usuários, orçamentos e estoque registram as etapas de
-processamento, resultados e registros não encontrados. Também há logs nas
-rotas, repositórios, resolução de dependências e consultas ao ViaCEP.
-As mensagens usam identificadores e contagens, sem incluir CPF, e-mail,
-endereço ou DTOs completos.
+| Perfil | Acesso principal |
+| --- | --- |
+| `admin` | Administração de usuários e ações do workflow. |
+| `manager` | Ações do workflow, respeitando transições e pré-condições. |
+| `technical` | Ações técnicas nas OS pelas quais é responsável. |
+| `financial` | Consulta de OS, sem comandos do workflow. |
+| `client` | Consulta e aprovação das próprias OS. |
 
-Em scripts independentes, chame
-`configure_logging()` antes de registrar mensagens; use
-`configure_logging("DEBUG")` para habilitar mensagens de depuração.
+Veículos, estoque e orçamentos exigem autenticação, mas ainda não possuem restrição por proprietário. As regras completas das ordens estão no [guia operacional](docs/06-guia-operacional.md).
 
-## API de usuários
+O access token expira em 15 minutos e o refresh em 7 dias por padrão, configuráveis no `.env`. Há uma sessão ativa por usuário: novo login ou refresh invalida o par anterior. `POST /auth/refresh` renova tokens; `POST /auth/logout` encerra a sessão; `POST /auth/change-password` altera a senha e revoga tokens. As senhas são persistidas como hash Argon2id.
 
-Execute `uv run uvicorn app.main:app --app-dir src --reload`.
-A documentação Swagger UI fica em `http://127.0.0.1:8000/docs`.
-O ReDoc fica em `http://127.0.0.1:8000/redoc` e o schema OpenAPI em
-`http://127.0.0.1:8000/openapi.json`.
-Essas rotas são habilitadas explicitamente em `create_app`, inclusive ao
-executar sem `--reload`. O comando `uv build` apenas gera o pacote;
-para acessar o Swagger, inicie o servidor com o comando acima.
+## 11. Estrutura dos principais diretórios do projeto
 
-| Método | Rota | Resultado |
-| --- | --- | --- |
-| POST | `/users` | Cria usuário (201) |
-| GET | `/users?offset=0&limit=100` | Lista usuários com paginação |
-| GET | `/users/{user_id}` | Consulta usuário |
-| PATCH | `/users/{user_id}` | Atualiza campos enviados |
-| DELETE | `/users/{user_id}` | Exclui usuário (204) |
-
-O `id` público é um inteiro positivo gerado sequencialmente pelo banco:
-use, por exemplo, `/users/1` para consultar, atualizar ou excluir.
-O `system_id` é um UUID gerado pelo sistema, retornado na criação e atualização,
-mas omitido nas respostas de consulta e listagem;
-nenhum dos dois deve ser enviado no corpo de criação ou atualização.
-Sequências podem ter intervalos após exclusões ou transações desfeitas.
-`create_at` e `update_at` são datas de persistência; o ORM atualiza
-`update_at` quando emite uma alteração SQL. No PostgreSQL, as colunas
-armazenam datas com fuso horário.
-
-### Migração do ID antigo
-
-Para uma tabela `cliente` existente com chave UUID, pare a aplicação e execute:
-
-```powershell
-uv run --env-file .env python -m app.bootstrap.migrate_client_ids
+```text
+mec-system/
+├── dados/                      # JSONs de demonstração e importação
+├── docs/                       # Wiki, arquitetura, modelo de dados e guia operacional
+├── http/                       # Requisições de exemplo para REST Client
+├── scripts/                    # Scripts de suporte operacional
+├── src/app/
+│   ├── main.py                 # Criação da API, routers e ciclo de vida
+│   ├── config.py               # Configurações de ambiente
+│   ├── bootstrap/              # Composição, carga inicial, migrações e jobs
+│   ├── modules/
+│   │   ├── users/              # Usuários, endereços e veículos
+│   │   ├── quotes/             # Orçamentos e estoque
+│   │   └── orders/             # Ordens, workflow, histórico e notificações
+│   └── shared/infrastructure/
+│       ├── database/           # Engine, sessões e base SQLAlchemy
+│       ├── logging/            # Logger compartilhado
+│       └── security/           # Autenticação, autorização e senhas
+├── tests/
+│   ├── unit/                  # Testes isolados
+│   └── integration/           # Testes com PostgreSQL
+├── .env.example               # Modelo de configuração
+├── docker-compose.yml         # Serviços e volume persistente
+├── Dockerfile                 # Imagem da API e do scheduler
+├── pyproject.toml             # Metadados, dependências e configuração de testes
+├── uv.lock                    # Versões resolvidas das dependências
+└── README.md                  # Visão geral e instruções de uso
 ```
 
-A migração preserva os UUIDs na coluna `system_id`, cria a chave inteira
-com identity e adiciona as datas. Os registros antigos recebem o horário
-da migração nas duas datas, pois não havia histórico anterior.
-A operação é transacional e pode ser repetida. Caso existam foreign keys
-para `cliente`, ela interrompe sem alterar os dados: essas relações precisam
-ser migradas junto com a chave. Depois, reinicie a aplicação.
-Para um banco novo, use `create_tables`; ele não migra tabelas existentes.
-
-Exemplo de criação:
-
-```json
-{
-  "primary_name": "Fernando",
-  "secondary_name": "Silva",
-  "cpf": "52998224725",
-  "email": "fernando@example.com",
-  "password": "uma-senha-segura-123",
-  "role": "client",
-  "address": {"cep": "01001000", "number": "10", "complement": "Sala 1"}
-}
-```
-
-O bootstrap em `app.bootstrap.users` conecta os casos de uso ao ViaCEP.
-O cliente HTTP é aberto e fechado pelo lifespan da aplicação.
-As rotas ficam em `modules/users/infrastructure/http`.
-
-### Configuração de persistência
-
-A aplicação usa `SQLAlchemyUserRepository` por padrão, com uma sessão
-PostgreSQL por requisição. Configure as variáveis `POSTGRES_*` no `.env`
-e crie a tabela com `uv run --env-file .env python -m app.bootstrap.create_tables`.
-Para conectar outra implementação, crie a aplicação com
-`create_app(user_repository=repository)` ou substitua a dependência
-`get_user_repository`.
-O contrato está em `application/ports/user_repository.py`.
-Não compartilhe uma sessão SQLAlchemy entre requisições concorrentes.
-
-Usuários inexistentes retornam 404, entradas inválidas retornam 422 e
-falhas HTTP do serviço de CEP retornam 502. Conflitos de integridade,
-como CPF duplicado, retornam 409.
-
-Execute os testes isolados com
-`uv run pytest tests/unit/test_users_router.py -q`.
-Eles usam um repositório de teste e respostas simuladas do ViaCEP.
-
+Dentro dos módulos, as pastas `domain/`, `application/` e `infrastructure/` separam as responsabilidades descritas na seção de arquitetura. A [wiki](docs/README.md) reúne a documentação complementar.

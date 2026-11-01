@@ -12,7 +12,7 @@
 
 **O que são e qual sua função:** SQL é a linguagem de consulta e manipulação de bancos relacionais; PostgreSQL é o sistema gerenciador adotado. Ele armazena usuários, veículos, orçamentos, estoque, ordens e notificações. O Compose utiliza PostgreSQL 16, com volume persistente. Os modelos usam chaves estrangeiras, identificadores únicos e uma coluna JSONB para os itens do orçamento. [Documentação do PostgreSQL 16](https://www.postgresql.org/docs/16/intro-whatis.html).
 
-**Justificativa:** a escolha combina praticidade, documentação extensa e uso consolidado no mercado. O modelo relacional se ajusta às relações entre cliente, veículo, orçamento e ordem, enquanto transações e restrições ajudam a preservar consistência. O JSONB permite armazenar a lista de itens de um orçamento, com as limitações de integridade explicadas no [MER](04-modelo-de-dados.md).
+**Justificativa:** o PostgreSQL foi escolhido por ser open source e amplamente utilizado no mercado. Seu modelo relacional, com uso de SQL, atende plenamente à proposta de organizar usuários, veículos, orçamentos e ordens de serviço. Chaves primárias e estrangeiras, restrições de unicidade e transações ajudam a manter a integridade dos relacionamentos e a consistência dos dados. As limitações de integridade dos campos JSON estão explicadas no [MER](04-modelo-de-dados.md).
 
 ## FastAPI
 

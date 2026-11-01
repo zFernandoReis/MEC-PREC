@@ -1,5 +1,4 @@
 # REST Client (VS Code). Execute o login antes das demais requisições.
-# Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
 @baseUrl = http://localhost:8000
 @cpf = 00000004774
 @password = zjgb3A86OvCuj2Q6UcVPy9Ql
@@ -33,7 +32,8 @@ Content-Type: application/json
   "model": "Uno",
   "year_manufacture": 2020,
   "year_model": 2021,
-  "license_plate": "HTT1234",
+  "license_plate": "HTT1233",
+  "chassis": "9BD12345678901234",
   "color": "Branco",
   "mileage": 45000,
   "fuel_type": "flex",
@@ -48,6 +48,16 @@ Authorization: Bearer {{token}}
 GET {{baseUrl}}/vehicles/{{vehicleId}}
 Authorization: Bearer {{token}}
 
+### Erro Chassis & License Plate (400)
+PATCH {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "license_plate": "HTTdasdasdas",
+  "chassis": "9BD12345678901234dasdasdsada"
+}
+
 ### Atualizar
 PATCH {{baseUrl}}/vehicles/{{vehicleId}}
 Authorization: Bearer {{token}}
@@ -57,7 +67,6 @@ Content-Type: application/json
   "mileage": 46000,
   "color": "Prata"
 }
-
 ### Excluir o registro selecionado (204) — execute somente quando desejar removê-lo
 DELETE {{baseUrl}}/vehicles/{{vehicleId}}
 Authorization: Bearer {{token}}

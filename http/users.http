@@ -1,11 +1,10 @@
 # REST Client (VS Code). Execute o login antes das demais requisições.
-# Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
 @baseUrl = http://localhost:8000
 @cpf = 00000004774
 @password = zjgb3A86OvCuj2Q6UcVPy9Ql
 @token = {{login.response.body.$.access_token}}
 # Todas as rotas deste arquivo exigem login de administrador.
-@searchCpf = 11144477735
+@searchCpf = 46097070802
 @userId = {{createUser.response.body.$.id}}
 @offset = 0
 @limit = 100
@@ -29,9 +28,9 @@ Content-Type: application/json
 {
   "primary_name": "Isabela",
   "secondary_name": "Soares",
-  "cpf": "11144477735",
+  "cpf": "{{searchCpf}}",
   "email": "isabela.soares@example.com",
-  "password": "4533554esc!",
+  "password": "BVBzQ3z3yOdDmiYkA+4E0+AO",
   "role": "client",
   "address": {
     "cep": "01001000",

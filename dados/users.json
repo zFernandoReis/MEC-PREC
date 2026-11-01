@@ -3,7 +3,7 @@
     "primary_name": "Ana",
     "secondary_name": "Silva",
     "cpf": "00000000191",
-    "email": "usuario01@example.com",
+    "email": "ana.silva@example.com",
     "password": "KIRL01a39joiR/eV43QifMtN",
     "role": "technical",
     "address": {
@@ -16,7 +16,7 @@
     "primary_name": "Bruno",
     "secondary_name": "Santos",
     "cpf": "00000000272",
-    "email": "usuario02@example.com",
+    "email": "bruno.santos@example.com",
     "password": "Jz24gnEnjByopmsXEDmPzf5k",
     "role": "manager",
     "address": {
@@ -172,7 +172,7 @@
     "primary_name": "Nicolas",
     "secondary_name": "Gomes",
     "cpf": "00000001406",
-    "email": "usuario14@example.com",
+    "email": "nicolas.gomes@example.com",
     "password": "mcWnYzKtmb5+XffAIrC97D4C",
     "role": "manager",
     "address": {

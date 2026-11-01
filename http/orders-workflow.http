@@ -1,8 +1,4 @@
 # REST Client (VS Code): execute sequencialmente, de cima para baixo.
-# Use admin/manager para este roteiro (aprovação externa exige evidência).
-# Informe IDs coerentes: veículo e orçamento pertencem ao mesmo cliente;
-# o responsável deve ter papel technical, admin ou manager.
-# expected_version é encadeado das respostas; não repita comandos já concluídos.
 @baseUrl = http://localhost:8000
 @cpf = 00000004774
 @password = zjgb3A86OvCuj2Q6UcVPy9Ql
@@ -140,13 +136,6 @@ Content-Type: application/json
 
 {"expected_version": {{workflowFinish.response.body.$.version}}, "received_by": "Cliente"}
 
-### 16. Tentativa de contornar o fluxo — 422
-PATCH {{baseUrl}}/orders/{{orderId}}
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{"order_status": "recebida"}
-
-### 17. OS entregue preservada para auditoria — 409 order_deletion_disabled
+### 16. OS entregue preservada para auditoria — 409 order_deletion_disabled
 DELETE {{baseUrl}}/orders/{{orderId}}
 Authorization: Bearer {{token}}
