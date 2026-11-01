@@ -1,0 +1,141 @@
+# REST Client (VS Code): execute sequencialmente, de cima para baixo.
+@baseUrl = http://localhost:8000
+@cpf = 00000004774
+@password = zjgb3A86OvCuj2Q6UcVPy9Ql
+@token = {{workflowLogin.response.body.$.access_token}}
+@clientId = 3
+@technicalId = 2
+@budgetId = 53
+@vehicleId = 1
+@orderId = {{workflowCreate.response.body.$.order_id}}
+
+### 1. Login — 200
+# @name workflowLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{"cpf": "{{cpf}}", "password": "{{password}}"}
+
+### 2. Criar OS — 201, recebida, version=1 (não enviar order_status)
+# @name workflowCreate
+POST {{baseUrl}}/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "client_id": {{clientId}},
+  "client_email": "cliente@example.com",
+  "technical_id": {{technicalId}},
+  "technical_name": "Técnico",
+  "technical_email": "tecnico@example.com",
+  "technical_responser_id": {{technicalId}},
+  "technical_responser_name": "Responsável técnico",
+  "technical_responser_email": "tecnico@example.com",
+  "budget_id": {{budgetId}},
+  "vehicle_id": {{vehicleId}},
+  "service_name": "Troca de óleo e filtro",
+  "service_description": "Inspeção e manutenção",
+  "duration_service_hours": 24
+}
+
+### 3. Ações disponíveis — 200, [start_diagnosis]
+GET {{baseUrl}}/orders/{{orderId}}/allowed-actions
+Authorization: Bearer {{token}}
+
+### 4. Salto proibido — 409, sem alterar a versão
+POST {{baseUrl}}/orders/{{orderId}}/deliver
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"expected_version": {{workflowCreate.response.body.$.version}}, "received_by": "Cliente"}
+
+### 5. Iniciar diagnóstico — 200, em_diagnostico
+# @name workflowDiagnosis
+POST {{baseUrl}}/orders/{{orderId}}/start-diagnosis
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"expected_version": {{workflowCreate.response.body.$.version}}}
+
+### 6. Solicitar aprovação — 200, aguardando_aprovacao; congela o orçamento
+# @name workflowRequestApproval
+POST {{baseUrl}}/orders/{{orderId}}/request-approval
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "expected_version": {{workflowDiagnosis.response.body.$.version}},
+  "diagnosis": "Óleo vencido e filtro saturado; substituir ambos."
+}
+
+### 7. Execução sem aprovação — 409 approval_required
+POST {{baseUrl}}/orders/{{orderId}}/start-execution
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"expected_version": {{workflowRequestApproval.response.body.$.version}}}
+
+### 8. Registrar aprovação externa — 200, permanece aguardando_aprovacao
+# Um cliente autenticado pode aprovar a própria OS sem evidence.
+# @name workflowApprove
+POST {{baseUrl}}/orders/{{orderId}}/approve
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "expected_version": {{workflowRequestApproval.response.body.$.version}},
+  "evidence": "Autorização do cliente registrada no atendimento presencial, protocolo 123."
+}
+
+### 9. Iniciar execução — 200, em_execucao, execution_started_at preenchido
+# @name workflowExecution
+POST {{baseUrl}}/orders/{{orderId}}/start-execution
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"expected_version": {{workflowApprove.response.body.$.version}}}
+
+### 10. Finalizar — 200, finalizada, finished_at preenchido
+# @name workflowFinish
+POST {{baseUrl}}/orders/{{orderId}}/finish
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "expected_version": {{workflowExecution.response.body.$.version}},
+  "service_report": "Óleo e filtro substituídos; testes de funcionamento concluídos."
+}
+
+### 11. Entregar — 200, entregue, delivered_at preenchido
+# @name workflowDeliver
+POST {{baseUrl}}/orders/{{orderId}}/deliver
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "expected_version": {{workflowFinish.response.body.$.version}},
+  "received_by": "Cliente responsável pelo veículo"
+}
+
+### 12. Estado terminal — 200, allowed_actions=[]
+GET {{baseUrl}}/orders/{{orderId}}/allowed-actions
+Authorization: Bearer {{token}}
+
+### 13. Histórico — 200, seis eventos em ordem de versão
+GET {{baseUrl}}/orders/{{orderId}}/history?offset=0&limit=100
+Authorization: Bearer {{token}}
+
+### 14. Histórico paginado — 200, dois eventos
+GET {{baseUrl}}/orders/{{orderId}}/history?offset=1&limit=2
+Authorization: Bearer {{token}}
+
+### 15. Repetição com versão antiga — 409 stale_order_version
+POST {{baseUrl}}/orders/{{orderId}}/deliver
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"expected_version": {{workflowFinish.response.body.$.version}}, "received_by": "Cliente"}
+
+### 16. OS entregue preservada para auditoria — 409 order_deletion_disabled
+DELETE {{baseUrl}}/orders/{{orderId}}
+Authorization: Bearer {{token}}

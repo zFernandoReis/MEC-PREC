@@ -1,0 +1,86 @@
+# REST Client (VS Code). Execute o login antes das demais requisições.
+
+@baseUrl = http://localhost:8000
+@cpf = 00000004774
+@password = zjgb3A86OvCuj2Q6UcVPy9Ql
+@token = {{login.response.body.$.access_token}}
+@technicalId = 10
+@clientId = 12
+@vehicleId = 10
+@toolId = 03AB35-6868
+
+@budgetId={{createBudget.response.body.$.budget_id}}
+@offset = 0
+@limit = 100
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{password}}"
+}
+
+### Criar (201)
+# @name createBudget
+POST {{baseUrl}}/budgets
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "technical_id": {{technicalId}},
+  "client_id": {{clientId}},
+  "vehicle_id": {{vehicleId}},
+  "technical_name": "Técnico Exemplo",
+  "technical_disponibility": true,
+  "service_name": "Troca de óleo",
+  "service_description": "Troca de óleo e filtro",
+  "tools": [
+    {
+      "tool_id": "{{toolId}}",
+      "tool_name": "Filtro de óleo HTTP",
+      "quantity": 1
+    }
+  ],
+  "amount": 250,
+  "duration_service_hours": 24,
+  "duration_service_days": 1
+}
+
+### Listar com paginação
+GET {{baseUrl}}/budgets?offset={{offset}}&limit={{limit}}
+Authorization: Bearer {{token}}
+
+### Consultar por ID
+
+
+GET {{baseUrl}}/budgets/{{budgetId}}
+Authorization: Bearer {{token}}
+
+### Atualizar
+PATCH {{baseUrl}}/budgets/{{budgetId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "technical_name": "Técnico Exemplo",
+  "technical_disponibility": true,
+  "service_name": "Troca de óleo",
+  "service_description": "Troca de óleo e filtro",
+  "tools": [
+    {
+      "tool_id": "{{toolId}}",
+      "tool_name": "Filtro de óleo HTTP",
+      "quantity": 1
+    }
+  ],
+  "amount": 280,
+  "duration_service_hours": 24,
+  "duration_service_days": 1
+}
+
+### Excluir o registro selecionado (204) — execute somente quando desejar removê-lo
+DELETE {{baseUrl}}/budgets/{{budgetId}}
+Authorization: Bearer {{token}}

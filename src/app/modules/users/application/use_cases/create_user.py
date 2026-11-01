@@ -1,0 +1,43 @@
+from app.modules.users.application.dtos.user_dto import CreateUserDTO
+from app.modules.users.application.services.address_service import AddressService
+from app.modules.users.domain.entities.user import User
+from app.shared.infrastructure.logging import logger
+from app.shared.infrastructure.security.passwords import hash_password
+from starlette.concurrency import run_in_threadpool
+
+
+class CreateUserUseCase:
+
+    def __init__(
+        self,
+        user_repository,
+        address_service: AddressService,
+    ):
+        self.user_repository = user_repository
+        self.address_service = address_service
+
+    async def execute(self, dto: CreateUserDTO):
+        logger.debug("Iniciando criação de usuário e consulta de endereço.")
+
+        address = await self.address_service.get_address(
+            cep=dto.address.cep,
+            number=dto.address.number,
+            complement=dto.address.complement,
+        )
+
+        user = User(
+            id=None,
+            primary_name=dto.primary_name,
+            secondary_name=dto.secondary_name,
+            cpf=dto.cpf,
+            email=dto.email,
+            role=dto.role,
+            adress=address,
+            password_hash=await run_in_threadpool(hash_password, dto.password.get_secret_value()),
+        )
+
+        logger.debug("Persistindo novo usuário com endereço resolvido.")
+        await self.user_repository.save(user)
+        logger.debug("Usuário criado: user_id=%s", user.id)
+
+        return user

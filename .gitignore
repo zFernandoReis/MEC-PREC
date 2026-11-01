@@ -8,4 +8,19 @@ wheels/
 
 # Virtual environments
 .venv
-/src
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python virtual environments
+.venv/
+venv/
+
+# Python testing cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment variables
+.env

@@ -1,0 +1,72 @@
+# REST Client (VS Code). Execute o login antes das demais requisições.
+@baseUrl = http://localhost:8000
+@cpf = 00000004774
+@password = zjgb3A86OvCuj2Q6UcVPy9Ql
+@token = {{login.response.body.$.access_token}}
+# Informe o ID de um proprietário existente.
+@ownerId = 12
+@vehicleId = {{createVehicle.response.body.$.vehicle_id}}
+@offset = 0
+@limit = 100
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{password}}"
+}
+
+### Criar (201)
+# @name createVehicle
+POST {{baseUrl}}/vehicles
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "owner_id": {{ownerId}},
+  "vehicle_type": "car",
+  "brand": "Fiat",
+  "model": "Uno",
+  "year_manufacture": 2020,
+  "year_model": 2021,
+  "license_plate": "HTT1233",
+  "chassis": "9BD12345678901234",
+  "color": "Branco",
+  "mileage": 45000,
+  "fuel_type": "flex",
+  "engine_capacity": 1000
+}
+
+### Listar com paginação
+GET {{baseUrl}}/vehicles?offset={{offset}}&limit={{limit}}
+Authorization: Bearer {{token}}
+
+### Consultar por ID
+GET {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{token}}
+
+### Erro Chassis & License Plate (400)
+PATCH {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "license_plate": "HTTdasdasdas",
+  "chassis": "9BD12345678901234dasdasdsada"
+}
+
+### Atualizar
+PATCH {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "mileage": 46000,
+  "color": "Prata"
+}
+### Excluir o registro selecionado (204) — execute somente quando desejar removê-lo
+DELETE {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{token}}

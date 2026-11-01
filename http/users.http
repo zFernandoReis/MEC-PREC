@@ -1,0 +1,66 @@
+# REST Client (VS Code). Execute o login antes das demais requisições.
+@baseUrl = http://localhost:8000
+@cpf = 00000004774
+@password = zjgb3A86OvCuj2Q6UcVPy9Ql
+@token = {{login.response.body.$.access_token}}
+# Todas as rotas deste arquivo exigem login de administrador.
+@searchCpf = 46097070802
+@userId = {{createUser.response.body.$.id}}
+@offset = 0
+@limit = 100
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{password}}"
+}
+
+### Criar (201)
+# @name createUser
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "primary_name": "Isabela",
+  "secondary_name": "Soares",
+  "cpf": "{{searchCpf}}",
+  "email": "isabela.soares@example.com",
+  "password": "BVBzQ3z3yOdDmiYkA+4E0+AO",
+  "role": "client",
+  "address": {
+    "cep": "01001000",
+    "number": "10",
+    "complement": "Sala 1"
+  }
+}
+
+### Listar com paginação
+GET {{baseUrl}}/users?offset={{offset}}&limit={{limit}}
+Authorization: Bearer {{token}}
+
+### Consultar por CPF
+GET {{baseUrl}}/users/cpf/{{searchCpf}}
+Authorization: Bearer {{token}}
+
+### Consultar por ID
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### Atualizar
+PATCH {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "primary_name": "Isabella",
+  "email": "isabela.machado@example.com"
+}
+
+### Excluir o registro selecionado (204) — execute somente quando desejar removê-lo
+DELETE {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}

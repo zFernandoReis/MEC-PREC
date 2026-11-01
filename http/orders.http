@@ -1,0 +1,68 @@
+# REST Client (VS Code). Execute o login antes das demais requisições.
+@baseUrl = http://localhost:8000
+@cpf = 00000004774
+@password = zjgb3A86OvCuj2Q6UcVPy9Ql
+@token = {{login.response.body.$.access_token}}
+# Informe IDs existentes de cliente, técnico, responsável, orçamento e veículo.
+@clientId = 1
+@technicalId = 2
+@responsibleId = 14
+@budgetId = 1
+@vehicleId = 1
+# A OS nasce recebida. Para avançar etapas, use orders-workflow.http.
+@orderId = {{createOrder.response.body.$.order_id}}
+@offset = 0
+@limit = 100
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "cpf": "{{cpf}}",
+  "password": "{{password}}"
+}
+
+### Criar (201)
+# @name createOrder
+POST {{baseUrl}}/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "client_id": {{clientId}},
+  "client_email": "ana.silva@example.com",
+  "technical_id": {{technicalId}},
+  "technical_name": "Bruno",
+  "technical_email": "bruno.santos@example.com",
+  "budget_id": {{budgetId}},
+  "vehicle_id": {{vehicleId}},
+  "service_name": "Troca de óleo",
+  "technical_responser_id": {{responsibleId}},
+  "technical_responser_name": "Nicolas",
+  "technical_responser_email": "nicolas.gomes@example.com",
+  "duration_service_hours": 24,
+  "service_description": "Troca de óleo e filtro"
+}
+
+### Listar com paginação
+GET {{baseUrl}}/orders?offset={{offset}}&limit={{limit}}
+Authorization: Bearer {{token}}
+
+### Consultar por ID
+GET {{baseUrl}}/orders/{{orderId}}
+Authorization: Bearer {{token}}
+
+### Atualizar parcialmente (200); campos omitidos são preservados
+PATCH {{baseUrl}}/orders/{{orderId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "service_description": "Troca de óleo e filtro"
+}
+
+### Exclusão bloqueada para preservar auditoria (409)
+DELETE {{baseUrl}}/orders/{{orderId}}
+Authorization: Bearer {{token}}
