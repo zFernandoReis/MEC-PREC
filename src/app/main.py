@@ -9,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.config import settings
 from app.modules.orders.application.exceptions import OrderNotFoundError
+from app.modules.orders.domain.entities.order_workflow import OrderConflictError, OrderPermissionError
 from app.modules.orders.application.ports.order_repository import OrderRepository
 from app.modules.orders.infrastructure.http.router_orders import router as orders_router
 from app.modules.quotes.application.ports.budget_repository import BudgetRepository
@@ -98,6 +99,14 @@ def create_app(user_repository: UserRepository | None = None, budget_repository:
     @application.exception_handler(OrderNotFoundError)
     async def order_not_found(request: Request, exc: OrderNotFoundError):
         return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+    @application.exception_handler(OrderConflictError)
+    async def order_conflict(request: Request, exc: OrderConflictError):
+        return JSONResponse(status_code=409, content={"detail": {"code": exc.code, "message": str(exc)}})
+
+    @application.exception_handler(OrderPermissionError)
+    async def order_forbidden(request: Request, exc: OrderPermissionError):
+        return JSONResponse(status_code=403, content={"detail": str(exc)})
 
     @application.exception_handler(ValueError)
     async def invalid_value(request: Request, exc: ValueError):

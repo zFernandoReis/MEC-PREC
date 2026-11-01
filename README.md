@@ -16,7 +16,7 @@ O Compose inicia três serviços:
   e `POSTGRES_DB` do `.env`. `POSTGRES_EXTERNAL_PORT` altera a porta no host;
   a comunicação entre containers continua em `postgres:5432`.
 - `app`: API em `http://localhost:8000/docs`. Espera o banco ficar saudável,
-  cria tabelas ausentes e aplica a migração de `notification_type` antes de
+  cria tabelas ausentes e aplica as migrações de `notification_type` e do workflow de OS antes de
   executar todos os testes em `tests` (unitários e integração), mostrando o
   resultado no log. Após aprovação, importa `dados` e inicia o Uvicorn.
   Falha na preparação, testes ou carga impede a API de iniciar.
@@ -40,16 +40,7 @@ no servidor. A API e o scheduler usam a mesma imagem, com dependências de
 instaladas a partir de `uv.lock`, incluindo pytest para a validação de startup.
 Os arquivos de `tests` e `dados` são incluídos na imagem; o `.env` não é copiado.
 
-A carga inicial segue `users`, `stock`, `vehicles`, `budgets`, remapeando as
-relações para os IDs gerados. Usa as mesmas rotas e regras da aplicação em uma
-instância interna, sem abrir uma porta HTTP. Consulta o ViaCEP, portanto a
-primeira inicialização precisa de acesso à internet. As senhas vêm dos JSONs;
-para registros sem senha, configure `MEC_INITIAL_PASSWORD` no `.env`.
-Nenhuma senha é registrada no log.
-Na carga automática, itens de orçamento sem `tool_id` são associados por
-`tool_name` a uma entrada única de `stock.json`, usando o ID gerado na carga.
-Nomes ausentes ou ambíguos impedem a importação. O importador HTTP manual
-continua exigindo `tool_id` explícito.
+A carga inicial importa somente `dados/users.json`, pelas rotas internas da aplicação. Consulta o ViaCEP e precisa de acesso à internet. As senhas vêm do JSON; para registros sem senha, configure `MEC_INITIAL_PASSWORD` no `.env`. Nenhuma senha é registrada no log. Os demais recursos podem ser importados pelo importador HTTP manual.
 
 Toda a carga ocorre em uma transação. Em falha, os dados da tentativa são
 revertidos. Ao concluir, grava `initial_dados_v1` em `bootstrap_ingestions`,
@@ -215,24 +206,26 @@ Todas as rotas de usuários exigem administrador, inclusive criação e mudança
 de papel. As rotas de veículos, estoque e orçamentos exigem usuário autenticado;
 esses três recursos ainda não têm restrição por proprietário.
 
-Nas ordens de serviço, usuários com papel `client` podem apenas consultar suas
+Nas ordens de serviço, usuários com papel `client` podem consultar e aprovar suas
 próprias OS. `GET /orders` filtra pelo ID do usuário autenticado antes de aplicar
 a paginação; parâmetros enviados pelo cliente não alteram esse proprietário.
 `GET /orders/{order_id}` retorna 404 tanto para uma OS alheia quanto inexistente.
-POST, PATCH e DELETE de ordens retornam 403 para clientes, inclusive nas próprias
+O POST de criação, PATCH e DELETE de ordens retornam 403 para clientes, inclusive nas próprias
 OS. Os papéis internos `admin`, `manager`, `technical` e `financial` mantêm acesso
-à consulta de todas as ordens e às operações de criação, alteração e exclusão.
+à consulta de todas as ordens, criação e edição antes da solicitação de aprovação.
+Exclusão física é bloqueada com 409 para preservar auditoria. As ações do workflow
+têm permissões específicas descritas abaixo.
 Sem autenticação, as rotas de ordens retornam 401.
 
 ### CRUD de ordens de serviço
 
 | Método | Rota | Resultado |
 | --- | --- | --- |
-| POST | `/orders` | Cria uma OS (201) |
+| POST | `/orders` | Cria uma OS em `recebida`, versão 1 (201) |
 | GET | `/orders?offset=0&limit=100` | Lista OS com paginação e escopo do usuário |
 | GET | `/orders/{order_id}` | Consulta uma OS (200) |
 | PATCH | `/orders/{order_id}` | Atualiza somente os campos enviados (200) |
-| DELETE | `/orders/{order_id}` | Exclui uma OS, sem corpo de resposta (204) |
+| DELETE | `/orders/{order_id}` | Bloqueia exclusão de OS existente (409) |
 
 O PATCH aceita, por exemplo, `{"service_name":"Alinhamento"}`. Campos omitidos
 mantêm seu valor. `service_description` e `duration_service_days` aceitam `null`
@@ -241,6 +234,74 @@ gerados pelo sistema não podem ser alterados no corpo da requisição. Consulta
 atualização e exclusão de OS inexistente retornam 404. Conflitos de integridade
 do banco retornam 409. As restrições de autorização descritas acima se aplicam
 a todas essas operações. Exemplos executáveis estão em [http/orders.http](http/orders.http).
+
+### Transições de ordens de serviço
+
+Fluxo: `recebida → em_diagnostico → aguardando_aprovacao → em_execucao → finalizada → entregue`.
+O status não é aceito no POST de criação nem no PATCH (422). O PATCH é permitido
+somente em recebida/diagnóstico e incrementa a versão. A aprovação é uma ação
+separada que mantém `aguardando_aprovacao` até o início real da execução.
+
+Todos os comandos abaixo recebem `expected_version` inteiro positivo, obtido
+na última consulta/resposta. Retornam 200 com a OS e sua nova versão. Versão
+desatualizada, repetição, salto de etapa e pré-condição não atendida retornam 409.
+Corpo inválido retorna 422, ausência de JWT 401 e falta de permissão 403.
+Cliente consultando ou tentando agir em OS alheia recebe 404.
+
+| Método | Rota sob `/orders/{order_id}` | Campos adicionais |
+| --- | --- | --- |
+| POST | `/start-diagnosis` | Nenhum |
+| POST | `/request-approval` | `diagnosis` obrigatório |
+| POST | `/approve` | `evidence` obrigatório para admin/manager; opcional para o próprio cliente |
+| POST | `/start-execution` | Nenhum; exige aprovação registrada |
+| POST | `/finish` | `service_report` obrigatório |
+| POST | `/deliver` | `received_by` obrigatório |
+| GET | `/allowed-actions` | Status, versão e ações elegíveis por estado/perfil; pré-condições são revalidadas nos comandos |
+| GET | `/history?offset=0&limit=100` | Histórico ordenado por versão; cliente recebe representação sem detalhes internos |
+
+Admin/manager operam todas as ações, respeitando as mesmas transições. Técnicos
+operam diagnóstico, solicitação, execução e finalização somente quando seu ID
+é o `technical_responser_id`. Cliente aprova apenas sua OS. Financial consulta,
+mas não executa comandos do workflow. A entrega é feita por admin/manager.
+
+Solicitar aprovação armazena uma cópia dos termos do orçamento em
+`budget_snapshot` e bloqueia sua edição/exclusão em `quotes`. Aprovar não significa
+iniciar o serviço. O autor vem do JWT, e a aprovação externa registra evidência
+e o cliente ao qual o consentimento se refere. Não há reabertura, cancelamento
+ou revisão de orçamento congelado nesta versão.
+
+Estado, versão e evento são confirmados na mesma transação. A OS e o orçamento
+são bloqueados durante validação/gravação; uma atualização condicional por versão
+também protege contra PATCH desatualizado. Falha ao gravar histórico reverte a ação.
+Datas reais ficam em `execution_started_at`, `finished_at` e `delivered_at`, sem
+substituir `service_date_end`, usado como prazo planejado pelos jobs. Na criação,
+horas são convertidas em dias corridos com arredondamento para cima.
+
+Para banco existente, com a API e o scheduler parados, execute antes de reiniciar:
+
+```powershell
+uv run python -m app.bootstrap.migrate_order_workflow
+```
+
+O startup Docker já executa essa migração. Ela é aditiva e repetível: preserva
+status existentes e não inventa autor, aprovação ou eventos antigos. OS legadas
+aguardando aprovação recebem uma cópia dos termos atuais e precisam de nova
+aprovação explícita. Orçamentos de OS aguardando aprovação, em execução,
+finalizadas ou entregues ficam congelados. OS legadas com vínculos incoerentes
+precisam de correção administrativa dos dados antes de avançar.
+
+Roteiro manual completo, incluindo erros esperados:
+[http/orders-workflow.http](http/orders-workflow.http).
+
+```powershell
+uv run pytest tests -q
+uv run pytest tests/integration/test_orders_workflow.py -q
+```
+
+Os testes integrados usam JWT, HTTP e repositórios reais. Exigem PostgreSQL
+configurado e permissão para criar schemas; cada cenário cria e remove apenas
+seu schema `test_orders_<uuid>`, sem modificar tabelas da aplicação. Cobrem os oito
+endpoints, autorização, concorrência, rollback, bloqueio de orçamento e migração.
 
 Exemplo no PowerShell (a senha fica oculta durante a digitação):
 
@@ -441,3 +502,4 @@ como CPF duplicado, retornam 409.
 Execute os testes isolados com
 `uv run pytest tests/unit/test_users_router.py -q`.
 Eles usam um repositório de teste e respostas simuladas do ViaCEP.
+

@@ -6,6 +6,7 @@ from app.modules.orders.application.use_cases.delete_order import DeleteOrderUse
 from app.modules.orders.application.use_cases.get_order import GetOrderUseCase
 from app.modules.orders.application.use_cases.list_order import ListOrdersUseCase
 from app.modules.orders.application.use_cases.update_order import UpdateOrderUseCase
+from app.modules.orders.application.use_cases.order_workflow import OrderWorkflowUseCase
 from app.shared.infrastructure.logging import logger
 
 
@@ -16,6 +17,7 @@ class OrdersUseCases:
     list_orders: ListOrdersUseCase
     update_order: UpdateOrderUseCase
     delete_order: DeleteOrderUseCase
+    workflow: OrderWorkflowUseCase
 
 
 def build_orders_use_cases(
@@ -29,4 +31,5 @@ def build_orders_use_cases(
         list_orders=ListOrdersUseCase(order_repository),
         update_order=UpdateOrderUseCase(order_repository),
         delete_order=DeleteOrderUseCase(order_repository),
+        workflow=OrderWorkflowUseCase(order_repository),
     )

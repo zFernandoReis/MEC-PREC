@@ -1,13 +1,13 @@
 # REST Client (VS Code). Execute o login antes das demais requisições.
 # Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
 @baseUrl = http://localhost:8000
-@cpf = 00000000191
-@password = KIRL01a39joiR/eV43QifMtN
+@cpf = 00000004774
+@password = zjgb3A86OvCuj2Q6UcVPy9Ql
 @token = {{login.response.body.$.access_token}}
 # Informe IDs existentes e o tool_id retornado pela criação de estoque.
-@technicalId = 2
-@clientId = 1
-@vehicleId = 1
+@technicalId = 10
+@clientId = 12
+@vehicleId = 10
 @toolId = 03AB35-6868
 # O POST não retorna budget_id. Liste os orçamentos e ajuste budgetId.
 @budgetId = 1

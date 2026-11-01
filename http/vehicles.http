@@ -1,11 +1,11 @@
 # REST Client (VS Code). Execute o login antes das demais requisições.
 # Defina MEC_HTTP_CPF e MEC_HTTP_PASSWORD no ambiente antes de abrir o editor.
 @baseUrl = http://localhost:8000
-@cpf = {{$processEnv MEC_HTTP_CPF}}
-@password = {{$processEnv MEC_HTTP_PASSWORD}}
+@cpf = 00000004774
+@password = zjgb3A86OvCuj2Q6UcVPy9Ql
 @token = {{login.response.body.$.access_token}}
 # Informe o ID de um proprietário existente.
-@ownerId = 1
+@ownerId = 12
 @vehicleId = {{createVehicle.response.body.$.vehicle_id}}
 @offset = 0
 @limit = 100

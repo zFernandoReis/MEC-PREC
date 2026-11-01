@@ -28,3 +28,10 @@ class Order:
     system_id: UUID = field(default_factory=uuid4)
     create_at: datetime | None = None
     update_at: datetime | None = None
+    version: int = 1
+    budget_snapshot: dict | None = None
+    approved_at: datetime | None = None
+    approved_by: int | None = None
+    execution_started_at: datetime | None = None
+    finished_at: datetime | None = None
+    delivered_at: datetime | None = None

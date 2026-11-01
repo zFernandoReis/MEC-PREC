@@ -3,6 +3,7 @@ from app.modules.orders.application.dtos.order_dto import UpdateOrderDTO
 from app.modules.orders.application.exceptions import OrderNotFoundError
 from app.modules.orders.application.ports.order_repository import OrderRepository
 from app.modules.orders.domain.entities.orders import Order
+from app.modules.orders.domain.entities.order_workflow import require_editable
 from app.shared.infrastructure.logging import logger
 
 
@@ -23,6 +24,7 @@ class UpdateOrderUseCase:
             logger.debug("Ordem de serviço não encontrada para atualização: order_id=%s", order_id)
             raise OrderNotFoundError()
 
+        require_editable(order)
         for field, value in dto.model_dump(exclude_unset=True).items():
             setattr(order, field, value)
 

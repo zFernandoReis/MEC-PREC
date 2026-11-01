@@ -10,8 +10,7 @@
 @responsibleId = 2
 @budgetId = 1
 @vehicleId = 1
-# Status: recebida, em_diagnostico, aguardando_aprovacao,
-# em_execucao, finalizada, entregue.
+# A OS nasce recebida. Para avançar etapas, use orders-workflow.http.
 @orderId = {{createOrder.response.body.$.order_id}}
 @offset = 0
 @limit = 100
@@ -45,7 +44,6 @@ Content-Type: application/json
   "technical_responser_name": "Técnico Responsável",
   "technical_responser_email": "responsavel.http@example.com",
   "duration_service_hours": 24,
-  "order_status": "recebida",
   "service_description": "Troca de óleo e filtro"
 }
 
@@ -63,10 +61,9 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "order_status": "em_execucao",
   "service_description": "Troca de óleo e filtro"
 }
 
-### Excluir o registro selecionado (204) — execute somente quando desejar removê-lo
+### Exclusão bloqueada para preservar auditoria (409)
 DELETE {{baseUrl}}/orders/{{orderId}}
 Authorization: Bearer {{token}}

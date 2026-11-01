@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import Date, DateTime, Enum, ForeignKey, Identity, Integer, String, Uuid, func
+from sqlalchemy import Date, DateTime, Enum, ForeignKey, Identity, Integer, JSON, String, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.modules.orders.domain.entities.orders import Order
@@ -57,6 +57,13 @@ class OrderModel(Base):
     )
     service_date_start: Mapped[date | None] = mapped_column(Date, nullable=True)
     service_date_end: Mapped[date | None] = mapped_column(Date, nullable=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default="1")
+    budget_snapshot: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    approved_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    execution_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     create_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -89,6 +96,13 @@ class OrderModel(Base):
             service_date_end=order.service_date_end,
             create_at=order.create_at,
             update_at=order.update_at,
+            version=order.version,
+            budget_snapshot=order.budget_snapshot,
+            approved_at=order.approved_at,
+            approved_by=order.approved_by,
+            execution_started_at=order.execution_started_at,
+            finished_at=order.finished_at,
+            delivered_at=order.delivered_at,
         )
 
     def to_entity(self) -> Order:
@@ -114,4 +128,11 @@ class OrderModel(Base):
             service_date_end=self.service_date_end,
             create_at=self.create_at,
             update_at=self.update_at,
+            version=self.version,
+            budget_snapshot=self.budget_snapshot,
+            approved_at=self.approved_at,
+            approved_by=self.approved_by,
+            execution_started_at=self.execution_started_at,
+            finished_at=self.finished_at,
+            delivered_at=self.delivered_at,
         )

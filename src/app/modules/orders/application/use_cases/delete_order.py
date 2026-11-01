@@ -1,6 +1,7 @@
 from app.modules.orders.application.exceptions import OrderNotFoundError
 from app.modules.orders.application.ports.order_repository import OrderRepository
 from app.shared.infrastructure.logging import logger
+from app.modules.orders.domain.entities.order_workflow import OrderConflictError
 
 
 class DeleteOrderUseCase:
@@ -16,5 +17,4 @@ class DeleteOrderUseCase:
             logger.debug("Ordem de serviço não encontrada para exclusão: order_id=%s", order_id)
             raise OrderNotFoundError()
 
-        await self.order_repository.delete(order)
-        logger.debug("Ordem de serviço excluída: order_id=%s", order.order_id)
+        raise OrderConflictError("Ordens de serviço devem ser preservadas para auditoria", "order_deletion_disabled")

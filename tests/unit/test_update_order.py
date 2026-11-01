@@ -36,7 +36,6 @@ def payload():
         "budget_id": 14, "vehicle_id": 15, "service_name": "Troca de óleo",
         "service_description": "Trocar óleo e filtro",
         "duration_service_hours": 48, "duration_service_days": 2,
-        "order_status": "em_execucao",
     }
 
 
@@ -52,7 +51,7 @@ def test_patch_updates_order_fields_and_relationships(authenticated_app, order, 
     for field, value in payload.items():
         assert response.json()[field] == value
         assert getattr(order, field) == value
-    assert order.order_status is OrderStatus.EM_EXECUCAO
+    assert order.order_status is OrderStatus.RECEBIDA
     assert order.order_id == 7
     assert order.system_id == original_system_id
     repository.get_by_id.assert_awaited_once_with(7)
@@ -135,12 +134,12 @@ def test_missing_order_returns_404(authenticated_app, method):
     repository.delete.assert_not_awaited()
 
 
-def test_delete_order_returns_empty_204(authenticated_app, order):
+def test_delete_order_preserves_audit_records(authenticated_app, order):
     repository = AsyncMock(spec=OrderRepository)
     repository.get_by_id.return_value = order
     with TestClient(authenticated_app(order_repository=repository)) as client:
         response = client.delete("/orders/7")
-    assert response.status_code == 204
-    assert response.content == b""
+    assert response.status_code == 409
+    assert response.json()["detail"]["code"] == "order_deletion_disabled"
     repository.get_by_id.assert_awaited_once_with(7)
-    repository.delete.assert_awaited_once_with(order)
+    repository.delete.assert_not_awaited()

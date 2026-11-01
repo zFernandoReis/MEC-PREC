@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, ConfigDict
 
 from app.modules.orders.domain.enums.order_status import OrderStatus
+from app.modules.orders.domain.enums.order_action import OrderAction
 
 
 class OrdersReadResponse(BaseModel):
@@ -31,10 +32,37 @@ class OrdersReadResponse(BaseModel):
     system_id: UUID = field(default_factory=uuid4)
     create_at: datetime | None = None
     update_at: datetime | None = None
+    version: int = 1
+    budget_snapshot: dict | None = None
+    approved_at: datetime | None = None
+    approved_by: int | None = None
+    execution_started_at: datetime | None = None
+    finished_at: datetime | None = None
+    delivered_at: datetime | None = None
 
 
 
 class OrdersResponse(OrdersReadResponse):
     system_id: UUID
+
+
+class OrderActionsResponse(BaseModel):
+    order_id: int
+    order_status: OrderStatus
+    version: int
+    allowed_actions: list[OrderAction]
+
+
+class OrderHistoryResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    event_id: int
+    order_id: int
+    action: OrderAction
+    previous_status: OrderStatus
+    next_status: OrderStatus
+    version: int
+    occurred_at: datetime
+    actor_id: int | None = None
+    details: dict | None = None
 
 

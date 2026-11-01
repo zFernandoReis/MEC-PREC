@@ -9,7 +9,8 @@ Arquivos para a extensão **REST Client do VS Code**, separados por domínio:
 | [vehicles.http](vehicles.http) | Criar, listar, consultar, atualizar e excluir veículos |
 | [stock.http](stock.http) | Criar, listar, consultar, atualizar e excluir estoque |
 | [budgets.http](budgets.http) | Criar, listar, consultar, atualizar e excluir orçamentos |
-| [orders.http](orders.http) | Criar, listar, consultar, atualizar e excluir ordens |
+| [orders.http](orders.http) | Criar, listar, consultar e editar ordens; exclusão bloqueada |
+| [orders-workflow.http](orders-workflow.http) | Fluxo completo: diagnóstico, aprovação, execução, finalização, entrega, ações e histórico |
 
 ## Como executar
 
@@ -28,8 +29,10 @@ Para um fluxo completo, crie usuários (cliente e técnico), estoque, veículo, 
 
 O POST de orçamento retorna `system_id`, mas não `budget_id`. Execute a listagem, localize o registro pelo `system_id` retornado e copie seu `budget_id` para a variável antes de consultar, atualizar, excluir ou criar uma ordem.
 
-Os PATCH de orçamento e ordem exigem os campos completos mostrados nos exemplos, conforme os DTOs atuais. O POST de ordem calcula as datas e a duração em dias no servidor.
+O PATCH de orçamento exige os campos completos mostrados no exemplo; o PATCH de ordem é parcial e só aceita edição antes da solicitação de aprovação. O POST de ordem calcula as datas e a duração em dias no servidor e fixa o status `recebida`. Não envie `order_status` no POST/PATCH.
 
-As exclusões estão no final de cada arquivo e removem dados reais do ambiente apontado por `@baseUrl`. Execute-as individualmente quando desejar limpar os registros; relações existentes podem impedir a exclusão. Alteração de senha e logout são cenários independentes: siga os comentários de `auth.http`.
+Execute `orders-workflow.http` na ordem dos blocos com uma conta admin/manager. As versões são capturadas das respostas anteriores. O roteiro inclui conflitos esperados (409) e entrada proibida (422), além dos oito endpoints do workflow. Ao solicitar aprovação, o orçamento é congelado; a aprovação fica registrada separadamente do início da execução. Os testes automatizados estão em `tests/integration/test_orders_workflow.py` e exercitam HTTP, JWT e PostgreSQL em schemas temporários isolados.
+
+As exclusões dos demais recursos removem dados reais do ambiente apontado por `@baseUrl`; relações existentes podem impedir a exclusão. Ordens de serviço retornam 409 e são preservadas para auditoria. Alteração de senha e logout são cenários independentes: siga os comentários de `auth.http`.
 
 Notificações são criadas pelos jobs e não possuem rotas HTTP registradas na aplicação.

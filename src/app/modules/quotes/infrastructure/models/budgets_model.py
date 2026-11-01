@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, ForeignKey, Identity, Integer, String, Uuid, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, Identity, Integer, String, Uuid, func, false
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -41,6 +41,7 @@ class BudgetModel(Base):
     amount: Mapped[float] = mapped_column(nullable=False)
     duration_service_hours: Mapped[float] = mapped_column(nullable=False)
     duration_service_days: Mapped[int] = mapped_column(nullable=False)
+    workflow_locked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default=false())
     create_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

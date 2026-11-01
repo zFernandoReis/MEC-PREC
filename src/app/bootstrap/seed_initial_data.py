@@ -28,7 +28,7 @@ async def import_records(client: httpx.AsyncClient, records: dict[str, list[dict
     vehicle_ids = {}
     stock_ids = {}
     count = 0
-    for resource in RESOURCES:
+    for resource in ("users",):
         for index, record in enumerate(records.get(resource, []), start=1):
             payload = dict(record)
             for field in {
@@ -77,7 +77,7 @@ async def seed(data_dir: Path) -> None:
             logger.info("Carga inicial já concluída; nenhum registro será importado.")
             return
         records = load_records(
-            data_dir, list(RESOURCES), user_password=os.environ.get("MEC_INITIAL_PASSWORD") or None,
+            data_dir, ["users"], user_password=os.environ.get("MEC_INITIAL_PASSWORD") or None,
             resolve_stock_names=True,
         )
         async with AsyncSession(
@@ -114,3 +114,4 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
+

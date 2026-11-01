@@ -6,7 +6,8 @@ import sys
 
 
 def main() -> None:
-    for module in ("app.bootstrap.create_tables", "app.bootstrap.migrate_notification_type"):
+    for module in ("app.bootstrap.create_tables", "app.bootstrap.migrate_notification_type",
+                   "app.bootstrap.migrate_order_workflow"):
         print(f"[startup] Executando {module}", flush=True)
         subprocess.run([sys.executable, "-m", module], check=True)
     print("[startup] Executando todos os testes do projeto", flush=True)

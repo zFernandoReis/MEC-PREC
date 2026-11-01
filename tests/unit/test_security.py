@@ -104,10 +104,10 @@ def test_staff_retains_order_access(auth_client, orders_repository, role):
     assert client.get("/orders/7", headers=auth).status_code == 200
     assert client.post("/orders", headers=auth, json=order_payload(orders_repository, "post")).status_code == 201
     assert client.patch("/orders/7", headers=auth, json=order_payload(orders_repository, "patch")).status_code == 200
-    assert client.delete("/orders/7", headers=auth).status_code == 204
+    assert client.delete("/orders/7", headers=auth).status_code == 409
     orders_repository.save.assert_awaited_once()
     orders_repository.update.assert_awaited_once()
-    orders_repository.delete.assert_awaited_once()
+    orders_repository.delete.assert_not_awaited()
 
 
 @pytest.mark.parametrize("method", ["get", "post", "patch", "delete"])

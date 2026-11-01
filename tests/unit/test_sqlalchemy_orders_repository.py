@@ -37,7 +37,7 @@ async def test_order_repository_crud(order):
     try:
         with Session(engine) as sync_session:
             session = AsyncMock(spec=AsyncSession)
-            for method in ("add", "commit", "refresh", "get", "scalars", "delete"):
+            for method in ("add", "commit", "refresh", "get", "scalars", "delete", "execute"):
                 getattr(session, method).side_effect = getattr(sync_session, method)
             repository = SQLAlchemyOrderRepository(session)
 
@@ -78,7 +78,7 @@ async def test_order_repository_crud(order):
                 technical_responser_email="newresponsible@example.com",
                 budget_id=14, vehicle_id=15, service_name="Troca de óleo",
                 service_description="Trocar óleo e filtro", duration_service_hours=3,
-                duration_service_days=1, order_status=OrderStatus.FINALIZADA,
+                duration_service_days=1, order_status=OrderStatus.RECEBIDA,
                 service_date_start=date(2026, 10, 21), service_date_end=date(2026, 10, 22),
             )
             await repository.update(updated)

@@ -1,6 +1,4 @@
-from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
-
-from app.modules.orders.domain.enums.order_status import OrderStatus
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
 
 class CreateOrderDTO(BaseModel):
@@ -18,8 +16,7 @@ class CreateOrderDTO(BaseModel):
     technical_responser_name: str
     technical_responser_email: str
     
-    duration_service_hours: float
-    order_status: OrderStatus
+    duration_service_hours: float = Field(gt=0, allow_inf_nan=False)
     service_description: str | None = None
 
 class UpdateOrderDTO(BaseModel):
@@ -37,8 +34,7 @@ class UpdateOrderDTO(BaseModel):
     technical_responser_name: str | None = None
     technical_responser_email: str | None = None
     duration_service_days: int | None = None
-    duration_service_hours: float | None = None
-    order_status: OrderStatus | None = None
+    duration_service_hours: float | None = Field(default=None, gt=0, allow_inf_nan=False)
     service_description: str | None = None
 
     @field_validator("*")

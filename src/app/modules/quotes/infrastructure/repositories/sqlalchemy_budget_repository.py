@@ -5,6 +5,7 @@ from app.modules.quotes.domain.entities.budget import Budget
 from app.modules.quotes.infrastructure.models.budgets_model import BudgetModel
 from app.modules.users.application.exceptions import UserNotFoundError
 from app.shared.infrastructure.logging import logger
+from app.modules.orders.domain.entities.order_workflow import OrderConflictError
 
 
 class SQLAlchemyBudgetRepository:
@@ -37,7 +38,7 @@ class SQLAlchemyBudgetRepository:
 
     async def update(self, budget: Budget) -> None:
         logger.debug("Atualizando orçamento no banco: budget_id=%s", budget.budget_id)
-        model = await self.session.get(BudgetModel, budget.budget_id)
+        model = await self._editable_budget(budget.budget_id)
         if model is None:
             logger.debug("Budget não encontrado no banco: budget_id=%s", budget.budget_id)
             raise UserNotFoundError()
@@ -60,10 +61,18 @@ class SQLAlchemyBudgetRepository:
 
     async def delete(self, budget: Budget) -> None:
         logger.debug("Excluindo orçamento no banco: budget_id=%s", budget.budget_id)
-        model = await self.session.get(BudgetModel, budget.budget_id)
+        model = await self._editable_budget(budget.budget_id)
         if model is None:
             logger.debug("Budget não encontrado no banco: budget_id=%s", budget.budget_id)
             raise UserNotFoundError()
         await self.session.delete(model)
         await self.session.commit()
         logger.debug("Exclusão de orçamento confirmada no banco: budget_id=%s", budget.budget_id)
+
+    async def _editable_budget(self, budget_id: int):
+        model = await self.session.scalar(select(BudgetModel).where(
+            BudgetModel.budget_id == budget_id,
+        ).with_for_update().execution_options(populate_existing=True))
+        if model is not None and model.workflow_locked:
+            raise OrderConflictError("Orçamento congelado para aprovação da OS", "budget_locked")
+        return model

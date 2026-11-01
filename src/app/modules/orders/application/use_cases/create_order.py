@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from math import ceil
 
 from app.modules.orders.application.dtos.order_dto import CreateOrderDTO
 from app.modules.orders.domain.entities.orders import Order
@@ -14,15 +15,11 @@ class CreateOrderUseCase:
         self.order_repository = order_repository
 
     async def execute(self, dto: CreateOrderDTO):
-        logger.debug("Iniciando criação de ordem de serviço com os dados: %s", dto)
-
-        if dto.order_status not in OrderStatus:
-            logger.debug("Status de ordem de serviço inválido: %s", dto.order_status)
-            raise ValueError(f"Status de ordem de serviço inválido: {dto.order_status}")
+        logger.debug("Iniciando criação de ordem de serviço.")
 
         duration_service_days = None
         if dto.duration_service_hours is not None:
-            duration_service_days = dto.duration_service_hours / 24
+            duration_service_days = ceil(dto.duration_service_hours / 24)
 
         service_date_start = date.today()
 
@@ -46,7 +43,7 @@ class CreateOrderUseCase:
             service_date_end=service_date_end,
             duration_service_hours=dto.duration_service_hours,
             duration_service_days=duration_service_days,
-            order_status=dto.order_status,
+            order_status=OrderStatus.RECEBIDA,
         )
 
         logger.debug("Persistindo novo pedido.")

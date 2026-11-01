@@ -28,6 +28,7 @@ class StockReadResponse(BaseModel):
 
 
 class BudgetResponse(BudgetReadResponse):
+    budget_id: int | None = None
     system_id: UUID
 
 

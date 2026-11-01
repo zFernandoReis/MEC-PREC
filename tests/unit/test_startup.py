@@ -24,7 +24,8 @@ def test_startup_order_and_test_failure_blocks_ingestion(monkeypatch):
     with pytest.raises(subprocess.CalledProcessError):
         start_server.main()
     assert [command[2] for command in calls] == [
-        "app.bootstrap.create_tables", "app.bootstrap.migrate_notification_type", "pytest",
+        "app.bootstrap.create_tables", "app.bootstrap.migrate_notification_type",
+        "app.bootstrap.migrate_order_workflow", "pytest",
     ]
     start.assert_not_called()
 
@@ -36,13 +37,14 @@ def test_successful_startup_runs_tests_then_seed_then_server(monkeypatch):
     monkeypatch.setattr(start_server.os, "execvp", start)
     start_server.main()
     assert [call.args[0][2] for call in run.call_args_list] == [
-        "app.bootstrap.create_tables", "app.bootstrap.migrate_notification_type", "pytest",
+        "app.bootstrap.create_tables", "app.bootstrap.migrate_notification_type",
+        "app.bootstrap.migrate_order_workflow", "pytest",
         "app.bootstrap.seed_initial_data",
     ]
     start.assert_called_once()
 
 
-async def test_initial_import_remaps_relations():
+async def test_initial_import_only_creates_users():
     requests = []
 
     def handler(request):
@@ -58,12 +60,8 @@ async def test_initial_import_remaps_relations():
                      "tools": [{"tool_id": "__seed_stock_position__:1", "tool_name": "Chave", "quantity": 1}]}],
     }
     async with httpx.AsyncClient(transport=httpx.MockTransport(handler), base_url="http://test") as client:
-        assert await import_records(client, records) == 4
-    assert [path for path, _ in requests] == ["/users", "/stock", "/vehicles", "/budgets"]
-    assert requests[-1][1] == {
-        "technical_id": 91, "client_id": 91, "vehicle_id": 72,
-        "tools": [{"tool_id": "stock-uuid", "tool_name": "Chave", "quantity": 1}],
-    }
+        assert await import_records(client, records) == 1
+    assert requests == [("/users", {"primary_name": "Ana"})]
     assert records["vehicles"][0]["owner_id"] == 1
 
 
@@ -99,3 +97,4 @@ def test_initial_load_requires_unique_stock_name(tmp_path, stock_count):
     else:
         with pytest.raises(IngestionError, match="correspondência única"):
             load_records(tmp_path, ["stock", "budgets"], resolve_stock_names=True)
+
